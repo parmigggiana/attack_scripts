@@ -1,8 +1,11 @@
 {
-    "log_level": "debug",
+    "log_level": "info",
     "team_id": 77,
     "highest_id": 3,
     "TEAM_TOKEN": "b0d9d5b0307be878aa00e9635e230d2d",
     "max_time": 60,
-    "tick_duration": 5
+    "tick_duration": 5,
+    "flag_regex": "[A-Z0-9]{31}=",
+    "baseip": "10.60.{id}.1",
+    "db_url": "mongodb://localhost:27017/"
 }

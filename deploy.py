@@ -4,15 +4,14 @@ from pwn import log
 import json
 from multiprocessing import Process
 import ctf_suite
+from ctf_suite import config
 
 
 def main():
-    with open("config/config.json") as config_file:
-        config = json.load(config_file)
-        log_level = config["log_level"]
-        tick_duration = config["tick_duration"]
-
-    log.setLevel(log_level)  # debug, info, warning, error
+    log.setLevel(config.log_level)  # debug, info, warning, error
+    while not ctf_suite.exploits:  # keep refreshing until there's an exploit
+        importlib.reload(ctf_suite)
+        time.sleep(5)
 
     while True:
         start = time.time()
@@ -32,7 +31,7 @@ def main():
             p.terminate()
         end = time.time()
         elapsed = end - start
-        remaining = (tick_duration - elapsed) * 0.99
+        remaining = (config.tick_duration - elapsed) * 0.99
         if remaining < 0:
             log.warn(f"Our exploits took {elapsed:.2f} seconds!")
             continue

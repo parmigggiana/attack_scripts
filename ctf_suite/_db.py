@@ -3,9 +3,9 @@ import pymongo
 import uuid
 
 import requests
-from common import submit_flags, log
+from common import submit_flags, log, config
 
-db_client = pymongo.MongoClient("mongodb://localhost:27017/")
+db_client = pymongo.MongoClient(config.db_url)
 db = db_client["ctf"]
 collection = db["flags"]
 
