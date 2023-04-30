@@ -44,6 +44,15 @@ def nop_test(exploit):
     return wrapper
 
 
+def self_test(exploit):
+    def wrapper(*args, **kwargs):
+        flags = exploit(teamip)
+        log.info(f"We caught {flags = }")
+
+    return wrapper
+
+
+teamip = config.baseip.format(id=config.team_id)
 nopteam = config.baseip.format(id=0)
 iplist = [
     config.baseip.format(id=id)
