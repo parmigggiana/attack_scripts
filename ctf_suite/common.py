@@ -1,5 +1,3 @@
-import re
-import multiprocessing as mp
 from threading import Thread
 from typing import Iterable
 from pwn import log
