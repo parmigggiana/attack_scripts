@@ -1,23 +1,21 @@
 import time
 import importlib
 from pwn import log
-import json
 from multiprocessing import Process
-import ctf_suite
-from ctf_suite import config
+import ctf_suite as cs
 
 
 def main():
-    log.setLevel(config.log_level)  # debug, info, warning, error
-    while not ctf_suite.exploits:  # keep refreshing until there's an exploit
-        importlib.reload(ctf_suite)
+    log.setLevel(cs.config.log_level)  # debug, info, warning, error
+    while not cs.exploits:  # keep refreshing until there's an exploit
+        importlib.reload(cs)
         time.sleep(5)
 
     while True:
         start = time.time()
         processes: list[Process] = []
-        for exploit in ctf_suite.exploits:
-            p = Process(target=ctf_suite.deploy_attack(exploit), name=exploit.__name__)
+        for exploit in cs.exploits:
+            p = Process(target=cs.deploy_attack(exploit), name=exploit.__name__)
             processes.append(p)
             log.info(f"Creating {p.name} process...")
         for p in processes:
@@ -31,7 +29,7 @@ def main():
             p.terminate()
         end = time.time()
         elapsed = end - start
-        remaining = (config.tick_duration - elapsed) * 0.99
+        remaining = (cs.config.tick_duration - elapsed) * 0.99
         if remaining < 0:
             log.warn(f"Our exploits took {elapsed:.2f} seconds!")
             continue
@@ -39,7 +37,7 @@ def main():
             f"Our exploit took {elapsed:.2f} seconds, waiting for {remaining:.2f} before running again..."
         )
         time.sleep(remaining)
-        importlib.reload(ctf_suite)
+        importlib.reload(cs)
 
 
 if __name__ == "__main__":

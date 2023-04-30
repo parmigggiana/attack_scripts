@@ -3,22 +3,8 @@ import multiprocessing as mp
 from threading import Thread
 from typing import Iterable
 from pwn import log
-import json
 import requests
-
-
-class config:
-    with open("config/config.json") as config_file:
-        config = json.load(config_file)
-        team_id = config["team_id"]
-        highest_id = config["highest_id"]
-        TEAM_TOKEN = config["TEAM_TOKEN"]
-        max_time = config["max_time"]
-        db_url = config["db_url"]
-        flag_regex = re.compile(repr(config["flag_regex"]))
-        baseip = config["baseip"]
-        log_level = config["log_level"]
-        tick_duration = config["tick_duration"]
+import config
 
 
 def deploy_attack(exploit):
