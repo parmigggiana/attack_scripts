@@ -1,0 +1,8 @@
+{
+    "log_level": "debug",
+    "team_id": 77,
+    "highest_id": 3,
+    "TEAM_TOKEN": "b0d9d5b0307be878aa00e9635e230d2d",
+    "max_time": 60,
+    "tick_duration": 5
+}
