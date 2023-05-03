@@ -139,6 +139,8 @@ def share(target_ip):
 ```
 
 ## TODO
-- [] Add flag submission logic
-- [] Fix live-updating configs and exploits
-- [] Move from pwn.log to proper logging with handler to distinguis processes and threads
+- [ ] Add flag submission logic
+- [ ] Fix live-updating configs and exploits
+- [ ] Only reload modules on-demand, using [watchdog](https://pythonhosted.org/watchdog/quickstart.html#quickstart)
+- [ ] Move from pwn.log to proper logging with handler to distinguis processes and threads
+- [ ] Gracefully stop the program intercepting SIGINT
