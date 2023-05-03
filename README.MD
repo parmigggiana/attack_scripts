@@ -1,7 +1,7 @@
 # A collection of scripts to simplify testing and deploying attacks in attack-defence CTFs
 All you need to do is write the exploit for a single target! `test_attack` will 
-help you check that everything works as intended. Before every game tick, `deploy` dinamically loads the configuration and any new exploits. Easy to configure through `config.py`, with a dedicated process for every type of attack and in that process a thread for each target.
-
+help you check that everything works as intended. Before every game tick, `deploy` dinamically loads the configuration and any new exploits. Easy to configure through `config.py`, with a dedicated thread for each attack against each target.
+Configs and exploits are being watched and the program will automatically reload them when changed, no need to restart it (EXPLOITS RELOAD IS BROKEN, CONFIGS WORK).
 ## Requirements
 - `docker compose` for simple MongoDB setup. Alternatively, you can host the database yourself.
 - `pip install -r requirements.txt`
@@ -9,15 +9,19 @@ help you check that everything works as intended. Before every game tick, `deplo
 ## Configuration
 At the start of the challenge, remember to properly edit `config.py` 
 ```python
-log_level = "info" # can be debug, info, warn, error
+log_level = "debug" 
 team_id = 77
-highest_id = 86
+highest_id = 1
 TEAM_TOKEN = "b0d9d5b0307be878aa00e935e230d2d"
-max_time = 60 # every thread (attack against a single target) gets at most max_time seconds, after which it's stopped and a warning is printed
-tick_duration = 120 # how long is every game tick in seconds
+max_time = 6  # time for a single thread to issue a warning. It will still wait for it to complete
+tick_duration = 20  # gametick duration
 flag_regex = "[A-Z0-9]{31}="
 baseip = "10.60.{id}.1"
 db_url = "mongodb://localhost:27017/"
+flag_submission_delay = (
+    120  # Every 120 seconds all new flags are submitted to the gameserver
+)
+
 ```
 
 ## Usage
@@ -41,9 +45,9 @@ have the same name. You can take a look at `config/exploits/example.py` for a re
 3. Make sure to only keep
 the necessary `log.info` and remove all `print`. Consider
 switching them to `log.debug`. The console is gonna get busy! 
-Edit every function printing to stdout so that it is surrounded by `l.acquire()` and `l.release()` (This is not essential, but with this many parallel processes and threads the sometimes print on the same line. It keeps the output tidy). 
+Edit every function printing to stdout so that it is surrounded by `l.acquire()` and `l.release()` (This is not essential, but with this many parallel processes and threads they sometimes print on the same line. It keeps the output tidy). 
 
-4. Done! If `deploy.py` is already running it will automatically load all new exploits before the next game tick (but don't forget to save the files lmao).
+4. Done! If `deploy.py` is already running it will automatically load all new exploits (BROKEN RIGHT NOW) before the next game tick (but don't forget to save the files lmao).
 
 ## Examples
 File `test_attack.py` 
@@ -144,3 +148,4 @@ def share(target_ip):
 - [ ] Only reload modules on-demand, using [watchdog](https://pythonhosted.org/watchdog/quickstart.html#quickstart)
 - [ ] Move from pwn.log to proper logging with handler to distinguis processes and threads
 - [ ] Gracefully stop the program intercepting SIGINT
+- [ ] Instead of using a timer, read the new gametick from tcpdumps/caronte/tulip. This would allow simpler reloading (just restart all the processes, we won't waste time since we won't have a timer anymore). This means much simpler and more robust synchronization. It's quite funky right now
