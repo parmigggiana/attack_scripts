@@ -1,4 +1,4 @@
-from queue import Empty, Full
+from queue import Empty
 import time
 import importlib
 import multiprocessing as mp
@@ -7,10 +7,20 @@ from threading import Thread
 import os
 import watchdog.observers
 import watchdog.events
+import config
 
 from ctf_suite import log
 
 stopSignal = 0
+
+configReloadQueue = mp.JoinableQueue()
+exploitsReloadEvent = mp.Event()
+
+
+def reloadlibs():
+    importlib.reload(config)
+    importlib.reload(cs._exploits)
+    importlib.reload(cs)
 
 
 def worker(func):
@@ -29,26 +39,28 @@ def Attacker():
         # log.debug(f"{old_exploits = }, {old_highest_id = }")
         for i, exploit in enumerate(cs.exploits):
             log.info(f"Starting {exploit.__name__} ({i+1}/{cs.exploitsNumber})")
-            for id in range(1, cs.config.highest_id + 1):
-                target_ip = cs.config.baseip.format(id=id)
+            for id in range(1, config.highest_id + 1):
+                target_ip = config.baseip.format(id=id)
                 t = Thread(
                     target=cs.syncAttack(exploit),
                     args=(target_ip,),
+                    kwargs={"event": exploitsReloadEvent},
                     name=f"{exploit.__name__}_{target_ip}",
                 )
                 tasks.append(t)
                 t.start()
-        cs.configReloadQueue.get()
-        cs.reloadEvent.set()
+        exploitsReloadEvent.wait()
+        cs.tokenQueue.put(0)  # Hold on the Gametick Loop Manager
         log.info(
-            "Exploits and/or highest_id have changed; respawning threads before next gametick"
+            "Exploits and/or config have changed; respawning threads before next gametick"
         )
         for task in tasks:
             task.join()
         log.debug("[Attacker] Done reloading")
-        cs.reloadEvent.clear()
-        cs.configReloadQueue.task_done()
-        importlib.reload(cs)
+        reloadlibs()
+        exploitsReloadEvent.clear()
+        for i in range(cs.threadsNumber - 1):
+            cs.tokenQueue.put(i)  # Make the appropriate number of new tasks
 
         log.debug("Attacker reloaded lib")
     else:
@@ -63,23 +75,24 @@ def Attacker():
 @worker
 def GametickLoopManager():
     while not stopSignal:
+        log.info("Starting new gametick")
         start = time.time()
         for i in range(cs.threadsNumber):
             cs.tokenQueue.put(i)
         cs.tokenQueue.join()
         elapsed = time.time() - start
-        remaining = cs.config.tick_duration - elapsed
+        remaining = config.tick_duration - elapsed
         if remaining < 0:
-            log.warn(f"Took more than {cs.config.tick_duration:.2f} seconds!")
+            log.warn(f"Took more than {config.tick_duration:.2f} seconds!")
             continue
         l = log.progress(
             f"Took {elapsed:.2f} seconds. Waiting for {remaining:.2f} seconds"
         )
         try:
             s = time.time()
-            cs.configReloadQueue.get(timeout=remaining * 0.99)
-            cs.configReloadQueue.task_done()
-            importlib.reload(cs)
+            configReloadQueue.get(timeout=remaining * 0.99)
+            configReloadQueue.task_done()
+            reloadlibs()
             log.debug("GametickLoopManager reloaded lib")
             remaining -= time.time() - s
             time.sleep(remaining * 0.99)
@@ -96,11 +109,11 @@ def FlagSubmitter():
     while not stopSignal:
         try:
             s = time.time()
-            cs.configReloadQueue.get(timeout=cs.config.flag_submission_delay)
-            cs.configReloadQueue.task_done()
-            importlib.reload(cs)
+            configReloadQueue.get(timeout=config.flag_submission_delay)
+            configReloadQueue.task_done()
+            reloadlibs()
             log.debug("FlagSubmitter reloaded lib")
-            remaining = cs.config.flag_submission_delay - (time.time() - s)
+            remaining = config.flag_submission_delay - (time.time() - s)
             if remaining > 0:
                 time.sleep(remaining)
         except Empty:
@@ -124,7 +137,7 @@ class ExploitsModHandler(watchdog.events.FileSystemEventHandler):
             and event.is_directory
         ):
             log.info("Reloading exploits")
-            # TODO: Signals to synchronize reloading on all processes
+            exploitsReloadEvent.set()
 
 
 class ConfigModHandler(watchdog.events.FileSystemEventHandler):
@@ -142,10 +155,10 @@ class ConfigModHandler(watchdog.events.FileSystemEventHandler):
             and ((time.time() - self.last_trigger) > 1)
         ):  # Added debouncing
             log.info("Reloading configs")
-            for i in range(3):
-                cs.configReloadQueue.put(i)
-
-            cs.configReloadQueue.join()
+            for i in range(2):
+                configReloadQueue.put(i)
+            exploitsReloadEvent.set()
+            configReloadQueue.join()
 
         self.last_trigger = time.time()
 
@@ -179,7 +192,7 @@ def main():
     pr = log.progress("Waiting for exploits to be loaded...")
     while not cs.exploits:  # keep refreshing until there's an exploit
         time.sleep(5)
-        importlib.reload(cs)
+        reloadlibs()
     else:
         pr.success()
     processes = []

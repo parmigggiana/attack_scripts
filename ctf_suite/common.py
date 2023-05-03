@@ -7,22 +7,10 @@ from multiprocessing import Event, JoinableQueue
 from ._exploits import exploitsNumber
 
 tokenQueue = JoinableQueue()
-configReloadQueue = JoinableQueue()
 reloadEvent = Event()
 
 teamip = config.baseip.format(id=config.team_id)
 nopteam = config.baseip.format(id=0)
-iplist = [  # except nopteam and teamip
-    config.baseip.format(id=id)
-    for id in range(1, config.highest_id + 1)
-    if id != config.team_id
-]
-
-threadsNumber = len(iplist) * exploitsNumber
-
-log.setLevel(
-    config.log_level
-)  # this is not best practice, ideally we shouldn't set this in library but it's a quick fix for live reloading the config
 
 
 def submit_flags(flags: str | Iterable):
