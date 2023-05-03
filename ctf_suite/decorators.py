@@ -1,20 +1,21 @@
 import time
-from .common import  log, submit_flags, nopteam, teamip, queue
+from .common import  log, submit_flags, nopteam, teamip, tokenQueue, reloadEvent
 
 import config
 
-def syncAttack(func):
+def syncAttack(exploit):
     def wrapper(*args, **kwargs):
-        while True:
+        while not reloadEvent.is_set():
             #log.critical(f"{func}: waiting for gametick")
-            queue.get()
+            tokenQueue.get()
+            if reloadEvent.is_set():
+                break
             start = time.time()
-            func(*args, **kwargs)
-            queue.task_done()
+            exploit(*args, **kwargs)
+            tokenQueue.task_done()
             elapsed = time.time() - start
             if elapsed > config.max_time:
-                log.warn(f"{func.__name__} took more than {config.max_time} seconds")
-            #log.critical(f"{func}: waiting = {barrier.n_waiting}")
+                log.warn(f"{exploit.__name__} took {elapsed:.2f} seconds")
         return
     return wrapper
 

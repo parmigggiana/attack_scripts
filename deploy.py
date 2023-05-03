@@ -1,34 +1,35 @@
-import logging
+from queue import Empty, Full
 import time
 import importlib
-from pwn import log
 import multiprocessing as mp
 import ctf_suite as cs
 from threading import Thread
 import os
+import watchdog.observers
+import watchdog.events
+
+from ctf_suite import log
 
 stopSignal = 0
 
 
-""" def signal_handler(signal, frame):
-    print("called signal handler")
-    stopSignal = 1
-    cs.gametickEvent.set()
-    cs.barrier.abort()
-    raise KeyboardInterrupt
- """
+def worker(func):
+    def wrapper(*args, **kwargs):
+        log.info(f"Started {mp.current_process().name} (PID = {os.getpid()})")
+        ret = func(*args, **kwargs)
+        return ret
+
+    return wrapper
 
 
+@worker
 def Attacker():
-    log.info(f"Started Attacker (PID = {os.getpid()})")
     while not stopSignal:
         tasks: list[Thread] = []
-        old_exploits = cs.exploits
-        old_highest_id = cs.config.highest_id
-        log.debug(f"{old_exploits = }, {old_highest_id = }")
-        for i, exploit in enumerate(old_exploits):
+        # log.debug(f"{old_exploits = }, {old_highest_id = }")
+        for i, exploit in enumerate(cs.exploits):
             log.info(f"Starting {exploit.__name__} ({i+1}/{cs.exploitsNumber})")
-            for id in range(1, old_highest_id + 1):
+            for id in range(1, cs.config.highest_id + 1):
                 target_ip = cs.config.baseip.format(id=id)
                 t = Thread(
                     target=cs.syncAttack(exploit),
@@ -37,16 +38,19 @@ def Attacker():
                 )
                 tasks.append(t)
                 t.start()
-        while True:
-            # log.debug("Waiting for next gametick")
-            importlib.reload(cs)
-            if old_exploits != cs.exploits and old_highest_id != cs.config.highest_id:
-                break
+        cs.configReloadQueue.get()
+        cs.reloadEvent.set()
         log.info(
-            "Exploits and/or highest_id have changed since last gametick; respawning threads"
+            "Exploits and/or highest_id have changed; respawning threads before next gametick"
         )
         for task in tasks:
             task.join()
+        log.debug("[Attacker] Done reloading")
+        cs.reloadEvent.clear()
+        cs.configReloadQueue.task_done()
+        importlib.reload(cs)
+
+        log.debug("Attacker reloaded lib")
     else:
         for task in tasks:
             try:
@@ -56,14 +60,13 @@ def Attacker():
         return 0
 
 
+@worker
 def GametickLoopManager():
-    log.info(f"Started Gametick Loop Manager (PID = {os.getpid()})")
     while not stopSignal:
-        importlib.reload(cs)
         start = time.time()
         for i in range(cs.threadsNumber):
-            cs.queue.put(i)
-        cs.queue.join()
+            cs.tokenQueue.put(i)
+        cs.tokenQueue.join()
         elapsed = time.time() - start
         remaining = cs.config.tick_duration - elapsed
         if remaining < 0:
@@ -72,18 +75,36 @@ def GametickLoopManager():
         l = log.progress(
             f"Took {elapsed:.2f} seconds. Waiting for {remaining:.2f} seconds"
         )
-        time.sleep(remaining * 0.99)
+        try:
+            s = time.time()
+            cs.configReloadQueue.get(timeout=remaining * 0.99)
+            cs.configReloadQueue.task_done()
+            importlib.reload(cs)
+            log.debug("GametickLoopManager reloaded lib")
+            remaining -= time.time() - s
+            time.sleep(remaining * 0.99)
+        except Empty:
+            pass
         l.success()
 
     else:
         return 0
 
 
+@worker
 def FlagSubmitter():
-    log.info(f"Started Flag Submitter (PID = {os.getpid()})")
     while not stopSignal:
-        importlib.reload(cs)
-        time.sleep(cs.config.flag_submission_delay)
+        try:
+            s = time.time()
+            cs.configReloadQueue.get(timeout=cs.config.flag_submission_delay)
+            cs.configReloadQueue.task_done()
+            importlib.reload(cs)
+            log.debug("FlagSubmitter reloaded lib")
+            remaining = cs.config.flag_submission_delay - (time.time() - s)
+            if remaining > 0:
+                time.sleep(remaining)
+        except Empty:
+            pass
         flags = cs.getNewFlags()
         if not flags:
             log.info("There is no new flags")
@@ -95,9 +116,64 @@ def FlagSubmitter():
         return 0
 
 
-def main():
-    log.setLevel(cs.config.log_level)  # debug, info, warning, error
+class ExploitsModHandler(watchdog.events.FileSystemEventHandler):
+    def on_modified(self, event: watchdog.events.FileSystemEvent):
+        super().on_modified(event)
+        if (
+            event.event_type is watchdog.events.EVENT_TYPE_MODIFIED
+            and event.is_directory
+        ):
+            log.info("Reloading exploits")
+            # TODO: Signals to synchronize reloading on all processes
 
+
+class ConfigModHandler(watchdog.events.FileSystemEventHandler):
+    def __init__(self) -> None:
+        super().__init__()
+
+        self.last_trigger = time.time()
+
+    def on_modified(self, event: watchdog.events.FileSystemEvent):
+        super().on_modified(event)
+        if (
+            (event.event_type is watchdog.events.EVENT_TYPE_MODIFIED)
+            and (not event.is_directory)
+            and ("config.py" in event.src_path)
+            and ((time.time() - self.last_trigger) > 1)
+        ):  # Added debouncing
+            log.info("Reloading configs")
+            for i in range(3):
+                cs.configReloadQueue.put(i)
+
+            cs.configReloadQueue.join()
+
+        self.last_trigger = time.time()
+
+
+@worker
+def ChangesObserver():
+    obs1 = watchdog.observers.Observer()
+    obs2 = watchdog.observers.Observer()
+    # print(obs1.__class__)
+    event_handler1 = ExploitsModHandler()
+    event_handler2 = ConfigModHandler()
+
+    obs1.schedule(event_handler1, path="exploits", recursive=True)
+    obs2.schedule(event_handler2, path="config.py")
+
+    obs1.start()
+    obs2.start()
+
+    while True:
+        time.sleep(2)
+
+    obs1.stop()
+    obs2.stop()
+    obs1.join()
+    obs2.join()
+
+
+def main():
     # signal.signal(signal.SIGINT, signal_handler)
     log.info(f"Parent has PID = {os.getpid()}")
     pr = log.progress("Waiting for exploits to be loaded...")
@@ -108,6 +184,7 @@ def main():
         pr.success()
     processes = []
 
+    processes.append(mp.Process(target=ChangesObserver, name="Changes Observer"))
     processes.append(mp.Process(target=Attacker, name="Attacks Manager"))
     processes.append(
         mp.Process(target=GametickLoopManager, name="Gametick Loop Manager")

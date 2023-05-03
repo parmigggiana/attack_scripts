@@ -1,15 +1,14 @@
-from concurrent.futures import thread
-from genericpath import exists
-import importlib
 from typing import Iterable
 from pwn import log
 import requests
 import config
-from multiprocessing import JoinableQueue
+from multiprocessing import Event, JoinableQueue
 
 from ._exploits import exploitsNumber
 
-queue = JoinableQueue()
+tokenQueue = JoinableQueue()
+configReloadQueue = JoinableQueue()
+reloadEvent = Event()
 
 teamip = config.baseip.format(id=config.team_id)
 nopteam = config.baseip.format(id=0)
@@ -20,6 +19,10 @@ iplist = [  # except nopteam and teamip
 ]
 
 threadsNumber = len(iplist) * exploitsNumber
+
+log.setLevel(
+    config.log_level
+)  # this is not best practice, ideally we shouldn't set this in library but it's a quick fix for live reloading the config
 
 
 def submit_flags(flags: str | Iterable):
