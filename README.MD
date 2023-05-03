@@ -200,3 +200,8 @@ def share(target_ip):
     l.release()
     return flags
 ```
+
+## TODO
+- [] Add flag submission logic
+- [] Fix live-updating configs and exploits
+- []
