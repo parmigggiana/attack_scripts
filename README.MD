@@ -145,7 +145,9 @@ def share(target_ip):
 ## TODO
 - [ ] Add flag submission logic
 - [ ] Fix live-updating configs and exploits
-- [ ] Only reload modules on-demand, using [watchdog](https://pythonhosted.org/watchdog/quickstart.html#quickstart)
+- [x] Only reload modules on-demand, using [watchdog](https://pythonhosted.org/watchdog/quickstart.html#quickstart)
 - [ ] Move from pwn.log to proper logging with handler to distinguis processes and threads
 - [ ] Gracefully stop the program intercepting SIGINT
 - [ ] Instead of using a timer, read the new gametick from tcpdumps/caronte/tulip. This would allow simpler reloading (just restart all the processes, we won't waste time since we won't have a timer anymore). This means much simpler and more robust synchronization. It's quite funky right now
+- [ ] Save last valid config, when reloading check validity first
+- [ ] Create Web UI for reading logs and interacting with the app

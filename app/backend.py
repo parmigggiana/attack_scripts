@@ -1,20 +1,63 @@
-from flask import Flask, jsonify
-from flask_restful import Api, Resource
+from flask import Flask, jsonify, render_template
 from flask_cors import CORS
+from flask_socketio import SocketIO
+from threading import Thread
+import watchdog
+import config
+from pathlib import Path
 
 app = Flask(__name__)
-api = Api(app)
+socketio = SocketIO(app, async_mode="threading")
+async_mode = socketio.async_mode
+channels = list(Path("logs").glob("**/*.log"))
 
-# enable CORS
-CORS(app, resources={r"/*": {"origins": "*"}})
-
-
-class Ping(Resource):
-    def get(self):
-        return jsonify("pong")
+CORS(origins="*")
 
 
-api.add_resource(Ping, "/")
+@app.route("/ping")
+def ping():
+    return jsonify("pong")
+
+
+@app.route("/", methods=["GET"])
+def index():
+    return render_template("index.html", channels=channels)
+
+
+@socketio.on("connected")
+def handle_connect(data):
+    for channel in channels:
+        l = getLogs(channel)
+        socketio.emit(str(channel), l)
+
+
+def getLogs(filename):
+    # print(f"{filename = }")
+    # print(filename)
+    with open(filename, "r") as f:
+        l = f.readlines()[-config.max_lines :]
+        return "".join(l)
+
+
+class eventHandler(watchdog.events.FileSystemEventHandler):
+    def on_modified(self, event: watchdog.events.FileSystemEvent):
+        super().on_modified(event)
+        if not event.is_directory:
+            socketio.emit(event.src_path, getLogs(event.src_path))
+
+
+def runObeserver():
+    obs = watchdog.observers.Observer()
+    obs.schedule(eventHandler(), path="logs/", recursive=True)
+    obs.start()
+
+
+def main():
+    t = Thread(target=runObeserver)
+    t.start()
+    socketio.run(app, host="0.0.0.0", port=5000, debug=True)
+    t.join()
+
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    main()

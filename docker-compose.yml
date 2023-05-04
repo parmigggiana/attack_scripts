@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  db:
+  mongodb:
     image: mongo
     ports:
       - 27017:27017
@@ -20,14 +20,3 @@ services:
       - ./app:/data/app
       - ./config.py:/data/app/config.py
       - ./exploits:/data/exploits
-
-  web:
-    build: ./web
-    ports:
-      - 5173:5173
-    restart: always
-    hostname: web
-    volumes:
-      - ./web:/data/web
-    environment:
-      - SERVICE_NAME=web

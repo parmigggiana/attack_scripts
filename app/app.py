@@ -9,6 +9,8 @@ import watchdog.observers
 import watchdog.events
 import config
 
+import backend
+
 from ctf_suite import log
 
 stopSignal = 0
@@ -186,11 +188,6 @@ def ChangesObserver():
     obs2.join()
 
 
-@worker
-def backend():
-    import backend
-
-
 def main():
     # signal.signal(signal.SIGINT, signal_handler)
     log.info(f"Parent has PID = {os.getpid()}")
@@ -208,7 +205,7 @@ def main():
         mp.Process(target=GametickLoopManager, name="Gametick Loop Manager")
     )
     processes.append(mp.Process(target=FlagSubmitter, name="Flags Submitter"))
-
+    processes.append(mp.Process(target=backend.main, name="RESTful API"))
     for p in processes:
         p.start()
     for p in processes:

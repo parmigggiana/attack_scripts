@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <title>Flask-SocketIO Test</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"
+        integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="
+        crossorigin="anonymous"></script>
+
+    <script type="text/javascript" charset="utf-8">
+        var socket = io();
+        socket.on('connect', function () {
+            socket.emit('connected', {});
+        });
+        {% for ch in channels %}
+        socket.on('{{ ch }}', (file) => {
+            document.getElementById('{{ ch }}').innerText = file;
+        });
+        {% endfor %}
+    </script>
+</head>
+
+<body>
+    <h1>Flask-SocketIO Test</h1>
+    <p>
+        Async mode is: <b>{{ async_mode }}</b><br>
+    </p>
+    <h2>Receive:</h2>
+    <div class="flex-container" style="justify-content:center;align-items:center">
+        {% for ch in channels %}
+        <div id="{{ ch }}"></div>
+        {% endfor %}
+    </div>
+</body>
+
+</html>
