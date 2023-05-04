@@ -171,7 +171,7 @@ def ChangesObserver():
     event_handler1 = ExploitsModHandler()
     event_handler2 = ConfigModHandler()
 
-    obs1.schedule(event_handler1, path="exploits", recursive=True)
+    obs1.schedule(event_handler1, path="../exploits", recursive=True)
     obs2.schedule(event_handler2, path="config.py")
 
     obs1.start()
@@ -184,6 +184,11 @@ def ChangesObserver():
     obs2.stop()
     obs1.join()
     obs2.join()
+
+
+@worker
+def backend():
+    import backend
 
 
 def main():

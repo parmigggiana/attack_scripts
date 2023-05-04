@@ -9,3 +9,25 @@ services:
     hostname: mongo
     volumes:
       - ./db:/data/db
+
+  app:
+    build: ./app
+    ports:
+      - 5000:5000
+    restart: always
+    hostname: app
+    volumes:
+      - ./app:/data/app
+      - ./config.py:/data/app/config.py
+      - ./exploits:/data/exploits
+
+  web:
+    build: ./web
+    ports:
+      - 5173:5173
+    restart: always
+    hostname: web
+    volumes:
+      - ./web:/data/web
+    environment:
+      - SERVICE_NAME=web

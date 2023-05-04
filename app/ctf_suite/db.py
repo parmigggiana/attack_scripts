@@ -11,6 +11,7 @@ try:
 except Exception as e:
     log.exception("Can't connect to database; did you set it up properly?")
 
+
 def save_flags(flags: list[str]):
     d = [{"_id": flag, "status": "unknown"} for flag in flags]
 
