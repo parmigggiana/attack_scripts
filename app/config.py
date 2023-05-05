@@ -1,4 +1,3 @@
-log_level = "debug"
 team_id = 77
 highest_id = 2
 TEAM_TOKEN = "b0d9d5b0307be878aa00e935e230d2d"

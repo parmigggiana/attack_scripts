@@ -6,10 +6,16 @@ import watchdog
 import config
 from pathlib import Path
 
+from ctf_suite import logger
+
+log = logger.bind(file="logs/backend.log")
 app = Flask(__name__)
 socketio = SocketIO(app, async_mode="threading")
 async_mode = socketio.async_mode
 channels = list(Path("logs").glob("**/*.log"))
+host = "0.0.0.0"
+port = 5000
+debug = True
 
 CORS(origins="*")
 
@@ -53,9 +59,11 @@ def runObeserver():
 
 
 def main():
+    log.info("Starting Observer Thread")
     t = Thread(target=runObeserver)
     t.start()
-    socketio.run(app, host="0.0.0.0", port=5000, debug=True)
+    log.info(f"Starting webserver on {host}:{port}")
+    socketio.run(app, host=host, port=port, debug=debug)
     t.join()
 
 

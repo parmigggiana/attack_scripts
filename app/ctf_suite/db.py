@@ -1,9 +1,10 @@
 import random
 import pymongo
 import uuid
-from pwn import log
 import config
+from .common import logger
 
+log = logger.bind(file="logs/db.log")
 try:
     db_client = pymongo.MongoClient(config.db_url)
     db = db_client["ctf"]
@@ -20,7 +21,7 @@ def save_flags(flags: list[str]):
     return res
 
 
-def getNewFlags() -> list[str]:  # I want this to run every 5 seconds or so
+def getNewFlags() -> list[str]:
     flags = [x["_id"] for x in collection.find({"status": "unknown"}, ["_id"])]
     return flags
 

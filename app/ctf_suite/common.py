@@ -3,8 +3,7 @@ from pwn import log
 import requests
 import config
 from multiprocessing import Event, JoinableQueue
-
-from ._exploits import exploitsNumber
+from logger import logger
 
 tokenQueue = JoinableQueue()
 reloadEvent = Event()
@@ -30,7 +29,7 @@ def submit_flags(flags: str | Iterable):
             timeout=5,
         )
         response = response.json()["Flags"]  # this is now a list
-
+        log.info(f"Got {response = }")
         return response
     except requests.ConnectTimeout as e:
         log.critical("Gameserver is unreachable!")

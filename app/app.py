@@ -1,27 +1,26 @@
-from queue import Empty
-import time
-import importlib
-import multiprocessing as mp
-import ctf_suite as cs
-from threading import Thread
 import os
-import watchdog.observers
-import watchdog.events
+import time
 import config
+import importlib
+import watchdog.events
+import watchdog.observers
+import multiprocessing as mp
 
-import backend
+from queue import Empty
+from threading import Thread
 
-from ctf_suite import log
+import ctf_suite as cs
 
 stopSignal = 0
 
 configReloadQueue = mp.JoinableQueue()
 exploitsReloadEvent = mp.Event()
+log = cs.logger
 
 
 def reloadlibs():
     importlib.reload(config)
-    importlib.reload(cs._exploits)
+    importlib.reload(cs.exploits)
     importlib.reload(cs)
 
 
@@ -36,6 +35,8 @@ def worker(func):
 
 @worker
 def Attacker():
+    global log
+    log = cs.logger.bind(file="logs/attacker.log")
     while not stopSignal:
         tasks: list[Thread] = []
         # log.debug(f"{old_exploits = }, {old_highest_id = }")
@@ -76,6 +77,8 @@ def Attacker():
 
 @worker
 def GametickLoopManager():
+    global log
+    log = cs.logger.bind(file="logs/gameloop.log")
     while not stopSignal:
         log.info("Starting new gametick")
         start = time.time()
@@ -85,11 +88,9 @@ def GametickLoopManager():
         elapsed = time.time() - start
         remaining = config.tick_duration - elapsed
         if remaining < 0:
-            log.warn(f"Took more than {config.tick_duration:.2f} seconds!")
+            log.warning(f"Took more than {config.tick_duration:.2f} seconds!")
             continue
-        l = log.progress(
-            f"Took {elapsed:.2f} seconds. Waiting for {remaining:.2f} seconds"
-        )
+        log.info(f"Took {elapsed:.2f} seconds. Waiting for {remaining:.2f} seconds")
         try:
             s = time.time()
             configReloadQueue.get(timeout=remaining * 0.99)
@@ -100,7 +101,7 @@ def GametickLoopManager():
             time.sleep(remaining * 0.99)
         except Empty:
             pass
-        l.success()
+        log.success("Done")
 
     else:
         return 0
@@ -108,6 +109,8 @@ def GametickLoopManager():
 
 @worker
 def FlagSubmitter():
+    global log
+    log = cs.logger.bind(file="logs/flagsubmitter.log")
     while not stopSignal:
         try:
             s = time.time()
@@ -167,6 +170,8 @@ class ConfigModHandler(watchdog.events.FileSystemEventHandler):
 
 @worker
 def ChangesObserver():
+    global log
+    log = cs.logger.bind(file="logs/observer.log")
     obs1 = watchdog.observers.Observer()
     obs2 = watchdog.observers.Observer()
     # print(obs1.__class__)
@@ -191,12 +196,12 @@ def ChangesObserver():
 def main():
     # signal.signal(signal.SIGINT, signal_handler)
     log.info(f"Parent has PID = {os.getpid()}")
-    pr = log.progress("Waiting for exploits to be loaded...")
+    log.info("Waiting for exploits to be loaded...")
     while not cs.exploits:  # keep refreshing until there's an exploit
         time.sleep(5)
         reloadlibs()
     else:
-        pr.success()
+        log.success("Done")
     processes = []
 
     processes.append(mp.Process(target=ChangesObserver, name="Changes Observer"))
@@ -205,13 +210,13 @@ def main():
         mp.Process(target=GametickLoopManager, name="Gametick Loop Manager")
     )
     processes.append(mp.Process(target=FlagSubmitter, name="Flags Submitter"))
-    processes.append(mp.Process(target=backend.main, name="RESTful API"))
+    # processes.append(mp.Process(target=backend.main, name="RESTful API"))
     for p in processes:
         p.start()
     for p in processes:
         p.join()
         if p.exitcode != 0:
-            log.warn(f"Process {p.name} ended with status: {p.exitcode}")
+            log.warning(f"Process {p.name} ended with status: {p.exitcode}")
         else:
             log.info(f"Process {p.name} ended successfully")
         p.terminate()
