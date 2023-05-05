@@ -1,10 +1,10 @@
 # A collection of scripts to simplify testing and deploying attacks in attack-defence CTFs
 All you need to do is write the exploit for a single target! `test_attack` will 
-help you check that everything works as intended. Before every game tick, `deploy` dinamically loads the configuration and any new exploits. Easy to configure through `config.py`, with a dedicated thread for each attack against each target.
-Configs and exploits are being watched and the program will automatically reload them when changed, no need to restart it (EXPLOITS RELOAD IS BROKEN, CONFIGS WORK).
+help you check that everything works as intended. Just run
+`docker compose --build up` and you're ready to go. Put your exploits in the `exploits` directory; they will be automatically be run in parallel threads against every target. Easily monitor the logs, change configs, upload your exploits or update them on the fly through the WebUI, open on by default on `localhost:5000`
+
 ## Requirements
-- `docker compose` for simple MongoDB setup. Alternatively, you can host the database yourself.
-- `pip install -r requirements.txt`
+- [`docker`](https://docs.docker.com/engine/install/) and [`docker compose`](https://docs.docker.com/compose/install/linux/)
 
 ## Configuration
 At the start of the challenge, remember to properly edit `config.py` 
@@ -25,11 +25,11 @@ flag_submission_delay = (
 ```
 
 ## Usage
-1. Build the database and start deploy.py
+1. 
 ```sh
 git clone https://github.com/parmigggiana/attack_scripts.git
 cd attack_scripts
-docker compose up --build -d && python3 deploy.py 
+docker compose up --build -d
 ```
 
 2. Edit the `exploit` function inside `test_attack.py`.
@@ -38,16 +38,15 @@ You can use the following decorators:
 - `@nop_test` to attack the nop_team
 - `@self_test` to attack your team_ip
 
-2. Copy your `exploit()` and all auxiliary functions to a new file inside `config/exploits/`.
+2. Copy your `exploit()` and all auxiliary functions to a new file inside `exploits/`.
 Give it a meaningful name and make sure the file and the exploit function 
-have the same name. You can take a look at `config/exploits/example.py` for a reference.
+have the same name. You can take a look at `exploits/example.py` for a reference.
 
 3. Make sure to only keep
 the necessary `log.info` and remove all `print`. Consider
-switching them to `log.debug`. The console is gonna get busy! 
-Edit every function printing to stdout so that it is surrounded by `l.acquire()` and `l.release()` (This is not essential, but with this many parallel processes and threads they sometimes print on the same line. It keeps the output tidy). 
+switching them to `log.debug`. 
 
-4. Done! If `deploy.py` is already running it will automatically load all new exploits (BROKEN RIGHT NOW) before the next game tick (but don't forget to save the files lmao).
+4. Done! The app will automatically load all new exploits (BROKEN RIGHT NOW) before the next game tick (don't forget to save the files).
 
 ## Examples
 File `test_attack.py` 
@@ -98,7 +97,7 @@ def main():
 if __name__ == "__main__":
     main()
 ```
-After we get this working, we create a new file `config/exploits/share.py`
+After we get this working, we create a new file `exploits/share.py`
 ```python
 import json
 import requests
@@ -146,8 +145,10 @@ def share(target_ip):
 - [ ] Add flag submission logic
 - [ ] Fix live-updating configs and exploits
 - [x] Only reload modules on-demand, using [watchdog](https://pythonhosted.org/watchdog/quickstart.html#quickstart)
-- [ ] Move from pwn.log to proper logging with handler to distinguis processes and threads
-- [ ] Gracefully stop the program intercepting SIGINT
+- [x] Move from pwn.log to proper logging with handler to distinguis processes and threads (EDIT: Ended up using [loguru](https://github.com/Delgan/loguru))
+- [ ] Gracefully stop the program intercepting SIGINT and SIGTERM
 - [ ] Instead of using a timer, read the new gametick from tcpdumps/caronte/tulip. This would allow simpler reloading (just restart all the processes, we won't waste time since we won't have a timer anymore). This means much simpler and more robust synchronization. It's quite funky right now
 - [ ] Save last valid config, when reloading check validity first
-- [ ] Create Web UI for reading logs and interacting with the app
+- [x] Create Web UI for reading logs and interacting with the app
+- [x] Update README
+- [ ] Change directory structure to something sensible
