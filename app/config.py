@@ -7,4 +7,3 @@ flag_regex = "[A-Z0-9]{31}="
 baseip = "10.60.{id}.1"
 db_url = "mongodb://mongo:27017/"
 flag_submission_delay = 120  # Every 2 mins all new flags are submitted
-max_lines = 5  # Lenght of history for the frontend

@@ -1,6 +1,5 @@
 import os
 import time
-import config
 import importlib
 import watchdog.events
 import watchdog.observers
@@ -19,7 +18,7 @@ log = cs.logger
 
 
 def reloadlibs():
-    importlib.reload(config)
+    importlib.reload(cs.config)
     importlib.reload(cs.exploits)
     importlib.reload(cs)
 
@@ -36,14 +35,14 @@ def worker(func):
 @worker
 def Attacker():
     global log
-    log = cs.logger.bind(file="logs/attacker.log")
+    log = cs.logger.bind(file="attacker.log")
     while not stopSignal:
         tasks: list[Thread] = []
         # log.debug(f"{old_exploits = }, {old_highest_id = }")
         for i, exploit in enumerate(cs.exploits):
             log.info(f"Starting {exploit.__name__} ({i+1}/{cs.exploitsNumber})")
-            for id in range(1, config.highest_id + 1):
-                target_ip = config.baseip.format(id=id)
+            for id in range(1, cs.config.highest_id + 1):
+                target_ip = cs.config.baseip.format(id=id)
                 t = Thread(
                     target=cs.syncAttack(exploit),
                     args=(target_ip,),
@@ -78,7 +77,7 @@ def Attacker():
 @worker
 def GametickLoopManager():
     global log
-    log = cs.logger.bind(file="logs/gameloop.log")
+    log = cs.logger.bind(file="gameloop.log")
     while not stopSignal:
         log.info("Starting new gametick")
         start = time.time()
@@ -86,9 +85,9 @@ def GametickLoopManager():
             cs.tokenQueue.put(i)
         cs.tokenQueue.join()
         elapsed = time.time() - start
-        remaining = config.tick_duration - elapsed
+        remaining = cs.config.tick_duration - elapsed
         if remaining < 0:
-            log.warning(f"Took more than {config.tick_duration:.2f} seconds!")
+            log.warning(f"Took more than {cs.config.tick_duration:.2f} seconds!")
             continue
         log.info(f"Took {elapsed:.2f} seconds. Waiting for {remaining:.2f} seconds")
         try:
@@ -110,15 +109,15 @@ def GametickLoopManager():
 @worker
 def FlagSubmitter():
     global log
-    log = cs.logger.bind(file="logs/flagsubmitter.log")
+    log = cs.logger.bind(file="flagsubmitter.log")
     while not stopSignal:
         try:
             s = time.time()
-            configReloadQueue.get(timeout=config.flag_submission_delay)
+            configReloadQueue.get(timeout=cs.config.flag_submission_delay)
             configReloadQueue.task_done()
             reloadlibs()
             log.debug("FlagSubmitter reloaded lib")
-            remaining = config.flag_submission_delay - (time.time() - s)
+            remaining = cs.config.flag_submission_delay - (time.time() - s)
             if remaining > 0:
                 time.sleep(remaining)
         except Empty:
@@ -171,7 +170,7 @@ class ConfigModHandler(watchdog.events.FileSystemEventHandler):
 @worker
 def ChangesObserver():
     global log
-    log = cs.logger.bind(file="logs/observer.log")
+    log = cs.logger.bind(file="observer.log")
     obs1 = watchdog.observers.Observer()
     obs2 = watchdog.observers.Observer()
     # print(obs1.__class__)
@@ -195,6 +194,8 @@ def ChangesObserver():
 
 def main():
     # signal.signal(signal.SIGINT, signal_handler)
+    global log
+    log = cs.logger.bind(file="app.log")
     log.info(f"Parent has PID = {os.getpid()}")
     log.info("Waiting for exploits to be loaded...")
     while not cs.exploits:  # keep refreshing until there's an exploit

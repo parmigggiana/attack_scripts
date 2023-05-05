@@ -32,7 +32,7 @@
             <div id="oh_no" class="flex flex-col items-center m-4 p-2 bg-primary rounded-lg gap-4 text-center">
                 <h1 id="logo" class="m-2 text-xl">M1lkExpl0it</h1>
                 <p>Oh no, the milkman's plane crashed!</p>
-                <img src="{{ url_for('static',filename='image/crash.svg') }}" alt="CRASHED PLANE">
+                <img src="{{ url_for('static',filename='img/crash.svg') }}" alt="CRASHED PLANE">
                 <p>Don't cry over spilled milk</p>
                 <p>Open on desktop</p><br>
             </div>
@@ -59,7 +59,7 @@
                                         class="button px-4 py-2 rounded-lg transition">
                                         Configs </a>
                                 </li>
-    
+
                                 <li> <a @click.prevent="activeTab = 'exploits'"
                                         :class="{ 'button-active bg-viola': activeTab === 'exploits' }" href="#exploits"
                                         class="button px-4 py-2 rounded-lg transition">
@@ -121,7 +121,7 @@
                                 </div>
                                 </div>
                                 </div>
-                                
+
                                 <!--Fine rima pagina "logs"-->
                                 <!--Inizio seconda pagina "configs"-->
                                 <div x-cloak x-show="activeTab === 'configs'" class="m-5">
@@ -130,7 +130,7 @@
                                         <button
                                             class="self-end px-4 py-2 bg-viola text-white rounded-lg shadow mt-4 mr-4 focus:bg-verde transition focus:outline-none">Save</button>
                                     </div>
-                                
+
                                 </div>
                                 <!--Fine seconda pagina "configs"-->
                                 <!--Inizio terza pagina "exploits"-->
@@ -146,7 +146,7 @@
                                             <button class="px-4 py-2 bg-viola rounded-lg shadow">Upload</button>
                                         </div>
                                     </div>
-                                
+
                                 </div>
                                 <!--Fine terza pagina "exploits"-->
                                 </div>

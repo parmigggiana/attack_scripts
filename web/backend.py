@@ -3,12 +3,18 @@ from flask_cors import CORS
 from flask_socketio import SocketIO
 from threading import Thread
 import watchdog
-import config
 from pathlib import Path
+from loguru import logger
 
-from ctf_suite import logger
+logs_dir = "logs"
+max_lines = 50  # Lenght of history for the frontend
 
-log = logger.bind(file="logs/backend.log")
+logger.add(
+    sink=f"{logs_dir}/backend.log",
+    format="{time:HH:mm:ss.SS} [{level:^8}] : {message}",
+    enqueue=True,
+    level="INFO",
+)
 app = Flask(__name__)
 socketio = SocketIO(app, async_mode="threading")
 async_mode = socketio.async_mode
@@ -41,7 +47,7 @@ def getLogs(filename):
     # print(f"{filename = }")
     # print(filename)
     with open(filename, "r") as f:
-        l = f.readlines()[-config.max_lines :]
+        l = f.readlines()[-max_lines:]
         return "".join(l)
 
 
@@ -54,15 +60,15 @@ class eventHandler(watchdog.events.FileSystemEventHandler):
 
 def runObeserver():
     obs = watchdog.observers.Observer()
-    obs.schedule(eventHandler(), path="logs/", recursive=True)
+    obs.schedule(eventHandler(), path=logs_dir, recursive=True)
     obs.start()
 
 
 def main():
-    log.info("Starting Observer Thread")
+    logger.info("Starting Observer Thread")
     t = Thread(target=runObeserver)
     t.start()
-    log.info(f"Starting webserver on {host}:{port}")
+    logger.info(f"Starting webserver on {host}:{port}")
     socketio.run(app, host=host, port=port, debug=debug)
     t.join()
 

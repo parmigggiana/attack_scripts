@@ -1,5 +1,4 @@
 from typing import Iterable
-from pwn import log
 import requests
 import config
 from multiprocessing import Event, JoinableQueue
@@ -13,6 +12,7 @@ nopteam = config.baseip.format(id=0)
 
 
 def submit_flags(flags: str | Iterable):
+    log = logger.bind(file="flagsubmitter.log")
     if flags is not list:
         flags = list(flags)
 

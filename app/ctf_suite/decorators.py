@@ -3,7 +3,7 @@ import config
 
 from .common import logger, submit_flags, nopteam, teamip, tokenQueue
 
-log = logger.bind(file="logs/exploits.log")
+log = logger.bind(file="exploits.log")
 
 
 def syncAttack(exploit):

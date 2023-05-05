@@ -4,7 +4,7 @@ import uuid
 import config
 from .common import logger
 
-log = logger.bind(file="logs/db.log")
+log = logger.bind(file="db.log")
 try:
     db_client = pymongo.MongoClient(config.db_url)
     db = db_client["ctf"]
