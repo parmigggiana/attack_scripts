@@ -6,7 +6,7 @@ import watchdog
 from pathlib import Path
 from loguru import logger
 
-logs_dir = "logs"
+logs_dir = "../logs"
 max_lines = 50  # Lenght of history for the frontend
 
 logger.add(
@@ -18,7 +18,7 @@ logger.add(
 app = Flask(__name__)
 socketio = SocketIO(app, async_mode="threading")
 async_mode = socketio.async_mode
-channels = list(Path("logs").glob("**/*.log"))
+channels = list(Path(logs_dir).glob("**/*.log"))
 host = "0.0.0.0"
 port = 5000
 debug = True

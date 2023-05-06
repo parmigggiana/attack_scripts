@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  mongodb:
+  mongo:
     image: mongo
     ports:
       - 27017:27017
@@ -17,7 +17,8 @@ services:
     volumes:
       - ./app:/data/app
       - ./exploits:/data/exploits
-      - logs:/data/app/logs
+      - ./config.json:/data/config.json
+      - logs:/data/logs
 
   web:
     build: ./web
@@ -27,7 +28,7 @@ services:
     hostname: web
     volumes:
       - ./web:/data/web
-      - logs:/data/web/logs
+      - logs:/data/logs
 
 volumes:
   logs:

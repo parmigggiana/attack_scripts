@@ -9,8 +9,8 @@
     <link rel="stylesheet" href="{{ url_for('static',filename='styles/index.css') }}">
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"
-    integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="
-    crossorigin="anonymous"></script>
+        integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="
+        crossorigin="anonymous"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="{{ url_for('static',filename='scripts/config.js') }}"></script>
     <script>
@@ -24,133 +24,132 @@
         });
         {% endfor %}
     </script>
-<title>M1lkExpl0it</title>
+    <title>M1lkExpl0it</title>
     </head>
 
-    <body class="bg-secondary text-white">
-        <!--Inizio sezione mobile -->
-        <div id="mobile" class="lg:hidden">
-            <div id="oh_no" class="flex flex-col items-center m-4 p-2 bg-primary rounded-lg gap-4 text-center">
-                <h1 id="logo" class="m-2 text-xl">M1lkExpl0it</h1>
-                <p>Oh no, the milkman's plane crashed!</p>
-                <img src="{{ url_for('static',filename='img/crash.svg') }}" alt="CRASHED PLANE">
-                <p>Don't cry over spilled milk</p>
-                <p>Open on desktop</p><br>
-            </div>
+<body class="bg-secondary text-white">
+    <!--Inizio sezione mobile -->
+    <div id="mobile" class="lg:hidden">
+        <div id="oh_no" class="flex flex-col items-center m-4 p-2 bg-primary rounded-lg gap-4 text-center">
+            <h1 id="logo" class="m-2 text-xl">M1lkExpl0it</h1>
+            <p>Oh no, the milkman's plane crashed!</p>
+            <img src="{{ url_for('static',filename='img/crash.svg') }}" alt="CRASHED PLANE">
+            <p>Don't cry over spilled milk</p>
+            <p>Open on desktop</p><br>
         </div>
-        <!--Fine sezione mobile -->
-        <div id="large" class="hidden lg:block" x-data="{ activeTab: 'logs' }">
-            <!-- Passiamo x-data per le tabs, non quelle effettive interne di logs ma quelle per la navbar -->
-            <div x-data="{ showDropdown: false }">
-                <!-- Div fantasma, serve solamente per non far buggare lo status e le tab -->
-                <nav class="m-4 p-2 bg-primary rounded-lg shadow flex items-center justify-between">
-                    <!-- Navbar che contiene 2 item => [primo item logo + button tabs ||| secondo item status] -->
-                    <div id="nav_item1-logo_action-" class="flex items-center gap-5">
-                        <!--Primo item che contiene logo e "tabs"-->
-                        <h1 id="logo" class="m-2 text-xl">M1lkExpl0it</h1>
-                        <div id="tabs_nav_link">
-                            <ul class="flex flex-wrap gap-2"> <!-- Tabs -->
-                                <li> <a @click.prevent="activeTab = 'logs'"
-                                        :class="{ 'button-active bg-viola': activeTab === 'logs' }" href="#logs"
-                                        class="button px-4 py-2 rounded-lg transition">
-                                        Logs </a>
-                                </li>
-                                <li> <a @click.prevent="activeTab = 'configs'"
-                                        :class="{ 'button-active bg-viola': activeTab === 'configs' }" href="#configs"
-                                        class="button px-4 py-2 rounded-lg transition">
-                                        Configs </a>
-                                </li>
+    </div>
+    <!--Fine sezione mobile -->
+    <div id="large" class="hidden lg:block" x-data="{ activeTab: 'logs' }">
+        <!-- Passiamo x-data per le tabs, non quelle effettive interne di logs ma quelle per la navbar -->
+        <div x-data="{ showDropdown: false }">
+            <!-- Div fantasma, serve solamente per non far buggare lo status e le tab -->
+            <nav class="m-4 p-2 bg-primary rounded-lg shadow flex items-center justify-between">
+                <!-- Navbar che contiene 2 item => [primo item logo + button tabs ||| secondo item status] -->
+                <div id="nav_item1-logo_action-" class="flex items-center gap-5">
+                    <!--Primo item che contiene logo e "tabs"-->
+                    <h1 id="logo" class="m-2 text-xl">M1lkExpl0it</h1>
+                    <div id="tabs_nav_link">
+                        <ul class="flex flex-wrap gap-2"> <!-- Tabs -->
+                            <li> <a @click.prevent="activeTab = 'logs'"
+                                    :class="{ 'button-active bg-viola': activeTab === 'logs' }" href="#logs"
+                                    class="button px-4 py-2 rounded-lg transition">
+                                    Logs </a>
+                            </li>
+                            <li> <a @click.prevent="activeTab = 'configs'"
+                                    :class="{ 'button-active bg-viola': activeTab === 'configs' }" href="#configs"
+                                    class="button px-4 py-2 rounded-lg transition">
+                                    Configs </a>
+                            </li>
 
-                                <li> <a @click.prevent="activeTab = 'exploits'"
-                                        :class="{ 'button-active bg-viola': activeTab === 'exploits' }" href="#exploits"
-                                        class="button px-4 py-2 rounded-lg transition">
-                                        Exploits </a>
-                                </li>
+                            <li> <a @click.prevent="activeTab = 'exploits'" :class="{ 'button-active bg-viola': activeTab === 'exploits' }"
+                                    href="#exploits" class="button px-4 py-2 rounded-lg transition">
+                                    Exploits </a>
+                            </li>
                             </ul>
-                        </div>
-                    </div>
-                    <div id="nav_item2-status-"> <!-- Secondo item, status -->
-                        <div>
-                            <button class="px-4 py-2 bg-secondary rounded-lg shadow" @mouseover="showDropdown = true"
-                                @mouseleave="showDropdown = false" @click="showDropdown = !showDropdown"
-                                class="button">Status</button>
-                        </div>
-                    </div>
-                </nav>
-                <div x-cloak x-show="showDropdown" @mouseover="showDropdown = true" @mouseleave="showDropdown = false"
-                    x-transition> <!-- Status element -->
-                    <div class="content !mt-0 m-4 p-2 bg-primary rounded-lg shadow" x-transition>
-                        <div id="service_1" class="flex items-center gap-3 p-2 bg-scuro">
-                            <p>Service 1:</p>
-                            <div id="service_palle" class="flex items-center gap-2">
-                                <div class="rounded-full p-2 bg-verde"></div>
-                                <div class="rounded-full p-2 bg-verde"></div>
-                                <div class="rounded-full p-2 bg-verde"></div>
                             </div>
-                        </div>
-                        <div id="service_2" class="flex items-center gap-3 p-2 bg-scuro">
-                            <p>Service 2:</p>
-                            <div id="service_palle" class="flex items-center gap-2">
-                                <div class="rounded-full p-2 bg-verde"></div>
-                                <div class="rounded-full p-2 bg-verde"></div>
-                                <div class="rounded-full p-2 bg-verde"></div>
                             </div>
-                        </div>
+                            <div id="nav_item2-status-"> <!-- Secondo item, status -->
+                                <div>
+                                    <button class="px-4 py-2 bg-secondary rounded-lg shadow" @mouseover="showDropdown = true"
+                                        @mouseleave="showDropdown = false" @click="showDropdown = !showDropdown" class="button">Status</button>
+                                </div>
+                            </div>
+                            </nav>
+                            <div x-cloak x-show="showDropdown" @mouseover="showDropdown = true" @mouseleave="showDropdown = false" x-transition>
+                                <!-- Status element -->
+                                <div class="content !mt-0 m-4 p-2 bg-primary rounded-lg shadow" x-transition>
+                                    <div id="service_1" class="flex items-center gap-3 p-2 bg-scuro">
+                                        <p>Service 1:</p>
+                                        <div id="service_palle" class="flex items-center gap-2">
+                                            <div class="rounded-full p-2 bg-verde"></div>
+                                            <div class="rounded-full p-2 bg-verde"></div>
+                                            <div class="rounded-full p-2 bg-verde"></div>
+                                        </div>
+                                    </div>
+                                    <div id="service_2" class="flex items-center gap-3 p-2 bg-scuro">
+                                        <p>Service 2:</p>
+                                        <div id="service_palle" class="flex items-center gap-2">
+                                            <div class="rounded-full p-2 bg-verde"></div>
+                                            <div class="rounded-full p-2 bg-verde"></div>
+                                            <div class="rounded-full p-2 bg-verde"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                            <!-- Container che contiene praticamente tutto, che cambia in base alle tabs della navabar -->
+                            <div class="content" id="container_main">
+                                <!--Inizio prima pagina "logs"-->
+                                <div x-cloak x-show="activeTab === 'logs'" class="m-5">
+                                    <div x-data="{ activeTab: 'tab1' }">
+                                        <div id="containe_ul_tabs">
+                                            <ul class="flex flex-wrap gap-2 mt-10 m-2 p-4 bg-primary rounded-lg shadow">
+                                                {% for ch in channels %}
+                                                <li><a @click.prevent="activeTab = '{{ ch }}'"
+                                                        :class="{ 'button-active bg-viola': activeTab === '{{ ch }}' }" href="#{{ ch }}"
+                                                        class="button px-4 py-2 rounded-lg transition">{{ ch.name.split('.')[0] }}</a></li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                        <div class="content">
+                                            {% for ch in channels %}
+                                            <div x-cloak x-show="activeTab === '{{ ch }}'" class="m-2 p-2 bg-primary rounded-lg shadow max-w-5xl">
+                                                <pre><code id="{{ ch }}"></code></pre>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+
+            <!--Fine rima pagina "logs"-->
+            <!--Inizio seconda pagina "configs"-->
+            <div x-cloak x-show="activeTab === 'configs'" class="m-5">
+                <div class="flex flex-col">
+                    <textarea class="p-4 bg-primary rounded-lg shadow resize-none focus:outline-none h-[calc(75vh)]"></textarea>
+                    <button
+                        class="self-end px-4 py-2 bg-viola text-white rounded-lg shadow mt-4 mr-4 focus:bg-verde transition focus:outline-none">Save</button>
+                </div>
+
+            </div>
+            <!--Fine seconda pagina "configs"-->
+            <!--Inizio terza pagina "exploits"-->
+            <div x-cloak x-show="activeTab === 'exploits'" class="m-5">
+                <div id="divisore_directory_or_drop" class="flex items-center justify-between gap-4 m-10">
+                    <div class="flex items-center flex-col p-4 bg-primary rounded-lg shadow h-[calc(80vh)] w-[calc(50vw)]">
+                        Directories =>
+                    </div>
+                    <div
+                        class="flex items-center flex-col justify-center p-4 rounded-lg border-2 border-viola border-dashed h-[calc(80vh)] w-[calc(50vw)]">
+                        <p>Drop file</p>
+                        <p>or</p>
+                        <button class="px-4 py-2 bg-viola rounded-lg shadow">Upload</button>
                     </div>
                 </div>
+
             </div>
-            <!-- Container che contiene praticamente tutto, che cambia in base alle tabs della navabar -->
-            <div class="content" id="container_main">
-                <!--Inizio prima pagina "logs"-->
-                <div x-cloak x-show="activeTab === 'logs'" class="m-5">
-                    <div x-data="{ activeTab: 'tab1' }">
-                        <div id="containe_ul_tabs">
-                            <ul class="flex flex-wrap gap-2 mt-10 m-2 p-4 bg-primary rounded-lg shadow">
-                                {% for ch in channels %}
-                                <li><a @click.prevent="activeTab = '{{ ch }}'"
-                                        :class="{ 'button-active bg-viola': activeTab === '{{ ch }}' }" href="#{{ ch }}"
-                                        class="button px-4 py-2 rounded-lg transition">{{ ch }}</a></li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                        <div class="content">
-                            {% for ch in channels %}
-                                    <div x-cloak x-show="activeTab === '{{ ch }}'" class="m-2 p-2 bg-primary rounded-lg shadow max-w-5xl">
-                                        <pre><code id="{{ ch }}"></code></pre>
-                                    </div>
-                                    {% endfor %}
-                                </div>
-                                </div>
-                                </div>
-
-                                <!--Fine rima pagina "logs"-->
-                                <!--Inizio seconda pagina "configs"-->
-                                <div x-cloak x-show="activeTab === 'configs'" class="m-5">
-                                    <div class="flex flex-col">
-                                        <textarea class="p-4 bg-primary rounded-lg shadow resize-none focus:outline-none h-[calc(75vh)]"></textarea>
-                                        <button
-                                            class="self-end px-4 py-2 bg-viola text-white rounded-lg shadow mt-4 mr-4 focus:bg-verde transition focus:outline-none">Save</button>
-                                    </div>
-
-                                </div>
-                                <!--Fine seconda pagina "configs"-->
-                                <!--Inizio terza pagina "exploits"-->
-                                <div x-cloak x-show="activeTab === 'exploits'" class="m-5">
-                                    <div id="divisore_directory_or_drop" class="flex items-center justify-between gap-4 m-10">
-                                        <div class="flex items-center flex-col p-4 bg-primary rounded-lg shadow h-[calc(80vh)] w-[calc(50vw)]">
-                                            Directories =>
-                                        </div>
-                                        <div
-                                            class="flex items-center flex-col justify-center p-4 rounded-lg border-2 border-viola border-dashed h-[calc(80vh)] w-[calc(50vw)]">
-                                            <p>Drop file</p>
-                                            <p>or</p>
-                                            <button class="px-4 py-2 bg-viola rounded-lg shadow">Upload</button>
-                                        </div>
-                                    </div>
-
-                                </div>
-                                <!--Fine terza pagina "exploits"-->
-                                </div>
+            <!--Fine terza pagina "exploits"-->
+            </div>
     </div>
 </body>
+
 </html>
