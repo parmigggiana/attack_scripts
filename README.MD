@@ -152,3 +152,5 @@ def share(target_ip):
 - [x] Create Web UI for reading logs and interacting with the app
 - [x] Update README
 - [ ] Change directory structure to something sensible
+- [ ] Consider moving from threading to asyncio
+- [ ] Consider moving from multiprocessing to [concurrent](https://docs.python.org/3/library/concurrent.futures.html)
