@@ -8,8 +8,6 @@ from milkman.logger import logger
 from milkman.exploits import Exploits
 from milkman.processes import GametickManager, FileObserver, FlagSubmitter
 
-stopSignal = 0
-
 configReloadQueue = mp.JoinableQueue()
 exploitsReloadEvent = mp.Event()
 conf = Config()

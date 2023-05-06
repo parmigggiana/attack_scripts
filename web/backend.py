@@ -16,7 +16,7 @@ logger.add(
     level="INFO",
 )
 app = Flask(__name__)
-socketio = SocketIO(app, async_mode="threading")
+socketio = SocketIO(app)
 async_mode = socketio.async_mode
 channels = list(Path(logs_dir).glob("**/*.log"))
 host = "0.0.0.0"

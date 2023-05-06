@@ -18,6 +18,13 @@ _conf = {
             "level": "DEBUG",
         },
         {
+            "sink": f"{_logs_dir}/exploits.log",
+            "format": "{time:HH:mm:ss.SS} [{level:^8}] : {message}",
+            "enqueue": True,
+            "filter": lambda record: record["extra"]["file"] == "exploits.log",
+            "level": "DEBUG",
+        },
+        {
             "sink": f"{_logs_dir}/observer.log",
             "format": "{time:HH:mm:ss.SS} [{level:^8}] : {message}",
             "enqueue": True,

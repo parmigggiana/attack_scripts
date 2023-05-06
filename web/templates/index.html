@@ -20,7 +20,7 @@
         });
         {% for ch in channels %}
         socket.on('{{ ch }}', (file) => {
-            document.getElementById('{{ ch }}').innerHTML = file;
+            document.getElementById('{{ ch }}').innerText = file;
         });
         {% endfor %}
     </script>
