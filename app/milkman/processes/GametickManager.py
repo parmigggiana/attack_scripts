@@ -13,18 +13,17 @@ In earlier versions we were spawning n threads and handling synchronization in t
 conf = Config()
 
 
-def timeCounterThread(n, gametickQueue):
+def timeCounterThread(n, gametickQueue: JoinableQueue):
     log = logger.bind(file="gameloop.log")
-
     tick = conf["tick_duration"]
-    elapsed = time.perf_counter() - start
 
-    for i in range(Exploits().count * conf["highest_id"]):
+    for i in range(len(Exploits()) * conf["highest_id"]):
         gametickQueue.put(i)
     start = time.perf_counter()
-    while gametickQueue.not_empty:
+    while gametickQueue._notempty:
         pass
     gametickQueue.join()
+    elapsed = time.perf_counter() - start
     remaining = tick - elapsed
     if remaining < 0:
         log.warning(f"Tick {n} took more than {tick:.2f} seconds!")
@@ -34,7 +33,7 @@ def timeCounterThread(n, gametickQueue):
     return
 
 
-def launchAttack(exploit, target_ip, gametickQueue):
+def launchAttack(exploit, target_ip: str, gametickQueue):
     log = logger.bind(file=f"exploits.log")
     level = "INFO"
 
@@ -44,7 +43,7 @@ def launchAttack(exploit, target_ip, gametickQueue):
     elapsed = time.perf_counter() - start
     gametickQueue.task_done()
 
-    if elapsed > conf["max_time"]:
+    if elapsed > conf["max_thread_time"]:
         level = "WARNING"
     log.log(level, f"{exploit.__name__} took {elapsed:.2f} seconds")
     return
@@ -63,8 +62,7 @@ def GametickManager():
             target=timeCounterThread,
             args=(tick_n, gametickQueue),
             name=f"tick_{tick_n}",
-        )
-        tasks: list[Thread] = []
+        ).start()
         for i, exploit in enumerate(exploits):
             log.info(f"Starting {exploit.__name__} ({i+1}/{len(exploits)})")
             for id in range(1, conf["highest_id"] + 1):
@@ -80,7 +78,6 @@ def GametickManager():
                     ),
                     name=f"{exploit.__name__}_{target_ip}",
                 )
-                tasks.append(t)
                 t.start()
 
         time.sleep(conf["tick_duration"])
