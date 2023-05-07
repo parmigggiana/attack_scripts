@@ -6,7 +6,8 @@ dependencies = [
     "pymongo",
     "watchdog",
     "inotify",
-    "loguru"
+    "loguru",
+    "jsonschema"
 ]
 
 [build-system]

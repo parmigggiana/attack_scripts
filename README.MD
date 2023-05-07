@@ -8,20 +8,18 @@ help you check that everything works as intended. Just run
 
 ## Configuration
 At the start of the challenge, remember to properly edit `config.py` 
-```python
-log_level = "debug" 
-team_id = 77
-highest_id = 1
-TEAM_TOKEN = "b0d9d5b0307be878aa00e935e230d2d"
-max_time = 6  # time for a single thread to issue a warning. It will still wait for it to complete
-tick_duration = 20  # gametick duration
-flag_regex = "[A-Z0-9]{31}="
-baseip = "10.60.{id}.1"
-db_url = "mongodb://localhost:27017/"
-flag_submission_delay = (
-    120  # Every 120 seconds all new flags are submitted to the gameserver
-)
-
+```json
+{    
+    "team_id": 77,
+    "highest_id": 2,
+    "TEAM_TOKEN": "b0d9d5b0307be878aa00e935e230d2d",
+    "max_thread_time": 6,
+    "tick_duration": 20,
+    "flag_regex": "[A-Z0-9]{31}=",
+    "baseip": "10.60.{id}.1",
+    "db_url": "mongodb://mongo:27017/",
+    "flag_submission_delay": 150
+}
 ```
 
 ## Usage
@@ -29,6 +27,7 @@ flag_submission_delay = (
 ```sh
 git clone https://github.com/parmigggiana/attack_scripts.git
 cd attack_scripts
+mkdir logs
 docker compose up --build -d
 ```
 
@@ -148,7 +147,7 @@ def share(target_ip):
 - [x] Move from pwn.log to proper logging with handler to distinguis processes and threads (EDIT: Ended up using [loguru](https://github.com/Delgan/loguru))
 - [ ] Gracefully stop the program intercepting SIGINT and SIGTERM
 - [ ] Instead of using a timer, read the new gametick from tcpdumps/caronte/tulip. This would allow simpler reloading (just restart all the processes, we won't waste time since we won't have a timer anymore). This means much simpler and more robust synchronization. It's quite funky right now
-- [ ] Save last valid config, when reloading check validity first
+- [x] Save last valid config, when reloading check validity first
 - [x] Create Web UI for reading logs and interacting with the app
 - [x] Update README
 - [x] Change directory structure to something sensible

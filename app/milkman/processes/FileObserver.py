@@ -14,7 +14,6 @@ from watchdog.observers import Observer
 
 class ExploitsModHandler(FileSystemEventHandler):
     def on_modified(self, event: FileSystemEvent):
-        super().on_modified(event)
         if event.event_type is FileModifiedEvent and event.is_directory:
             logger.info("Reloading exploits", extra={"file": "observer.log"})
             Exploits().load_exploits()
@@ -27,7 +26,6 @@ class ConfigModHandler(FileSystemEventHandler):
         self.last_trigger = time.perf_counter()
 
     def on_modified(self, event: FileSystemEvent):
-        super().on_modified(event)
         if (
             (event.event_type is EVENT_TYPE_MODIFIED)
             and (not event.is_directory)
@@ -54,9 +52,9 @@ def FileObserver():
 
     obs1.start()
     obs2.start()
-
+    log.debug("Observer started")
     while True:
-        time.sleep(10)
+        time.sleep(2)
 
     obs1.stop()
     obs2.stop()
