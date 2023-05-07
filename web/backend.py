@@ -72,6 +72,7 @@ class eventHandler(watchdog.events.FileSystemEventHandler):
     def on_modified(self, event: watchdog.events.FileSystemEvent):
         super().on_modified(event)
         if not event.is_directory:
+            # logger.debug("Emitting on socketio")
             socketio.emit(event.src_path, getLogs(event.src_path))
 
 
