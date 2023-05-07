@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% block head%}
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static',filename='styles/index.css') }}">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"
+        integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="{{ url_for('static',filename='scripts/config.js') }}"></script>
+    <title>M1lkExpl0it</title>
+    {% endblock %}
+</head>
+
+<body class="bg-secondary text-white">
+    <!--Inizio sezione mobile -->
+    <div id="mobile" class="lg:hidden">
+        <div id="oh_no" class="flex flex-col items-center m-4 p-2 bg-primary rounded-lg gap-4 text-center">
+            <h1 id="logo" class="m-2 text-xl">M1lkExpl0it</h1>
+            <p>Oh no, the milkman's plane crashed!</p>
+            <img src="{{ url_for('static',filename='img/crash.svg') }}" alt="CRASHED PLANE">
+            <p>Don't cry over spilled milk</p>
+            <p>Open on desktop</p><br>
+        </div>
+    </div>
+    <!--Fine sezione mobile -->
+    <div id="large" class="hidden lg:block" x-data="{ activeTab: 'logs' }">
+        <!-- Passiamo x-data per le tabs, non quelle effettive interne di logs ma quelle per la navbar -->
+        <div x-data="{ showDropdown: false }">
+            <!-- Div fantasma, serve solamente per non far buggare lo status e le tab -->
+
+            {% include "navbar.html" %}
+        </div>
+        <!-- Container che contiene praticamente tutto, che cambia in base alle tabs della navabar -->
+        <div class="content" id="container_main">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+</body>
+
+</html>

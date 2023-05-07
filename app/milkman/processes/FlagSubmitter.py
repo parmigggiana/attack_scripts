@@ -1,9 +1,16 @@
+import sys
 import time
-
+import signal
 import requests
+
 from milkman.config import Config
 from milkman.logger import logger
 from milkman.db import getNewFlags, updateFlags
+
+
+def sigint_handler():
+    print("stopping flagsubmitter")
+    sys.exit(0)
 
 
 def submit_flags(flags: str | list[str]):
@@ -31,6 +38,7 @@ def submit_flags(flags: str | list[str]):
 
 
 def FlagSubmitter():
+    signal.signal(signal.SIGINT, sigint_handler)
     log = logger.bind(file="flagsubmitter.log")
     conf = Config()
 

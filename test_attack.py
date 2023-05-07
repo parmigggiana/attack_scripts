@@ -1,5 +1,6 @@
 from pwn import log
-from ctf_suite import local_test
+
+from milkman import local_test
 
 
 @local_test

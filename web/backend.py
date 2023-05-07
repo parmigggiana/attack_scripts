@@ -1,10 +1,12 @@
-from flask import Flask, jsonify, render_template
-from flask_cors import CORS
-from flask_socketio import SocketIO
-from threading import Thread
+import time
 import watchdog
+
 from pathlib import Path
 from loguru import logger
+from threading import Thread
+from flask_cors import CORS
+from flask_socketio import SocketIO
+from flask import Flask, jsonify, redirect, render_template
 
 logs_dir = "../logs"
 max_lines = 50  # Lenght of history for the frontend
@@ -31,9 +33,24 @@ def ping():
     return jsonify("pong")
 
 
+@app.route("/logs")
+def logs():
+    return render_template("logs.html", channels=channels)
+
+
+@app.route("/configs")
+def configs():
+    return render_template("configs.html")
+
+
+@app.route("/exploits")
+def exploits():
+    return render_template("exploits.html")
+
+
 @app.route("/", methods=["GET"])
 def index():
-    return render_template("index.html", channels=channels)
+    return redirect("/logs")
 
 
 @socketio.on("connected")
@@ -74,4 +91,5 @@ def main():
 
 
 if __name__ == "__main__":
+    time.tzset()
     main()

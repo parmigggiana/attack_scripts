@@ -14,9 +14,11 @@ Executed in   71.82 millis    fish           external
 
 """
 import itertools
+
 from threading import Thread
-frommilkman.src.exploits import Exploits
-frommilkman.src.config import Config
+
+from milkman.exploits import Exploits
+from milkman.config import Config
 
 
 def emptyfun(target_ip, exploit):

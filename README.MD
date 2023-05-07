@@ -142,7 +142,7 @@ def share(target_ip):
 
 ## TODO
 - [ ] Add flag submission logic
-- [ ] Fix live-updating configs and exploits
+- [ ] Fix live-updating configs and exploits. Why is observer not working?
 - [x] Only reload modules on-demand, using [watchdog](https://pythonhosted.org/watchdog/quickstart.html#quickstart)
 - [x] Move from pwn.log to proper logging with handler to distinguis processes and threads (EDIT: Ended up using [loguru](https://github.com/Delgan/loguru))
 - [ ] Gracefully stop the program intercepting SIGINT and SIGTERM
@@ -151,5 +151,5 @@ def share(target_ip):
 - [x] Create Web UI for reading logs and interacting with the app
 - [x] Update README
 - [x] Change directory structure to something sensible
-- [ ] Consider moving from threading to asyncio
-- [ ] Consider moving from multiprocessing to [concurrent](https://docs.python.org/3/library/concurrent.futures.html)
+- [x] Consider moving from multiprocessing to [concurrent](https://docs.python.org/3/library/concurrent.futures.html)
+- [ ] Consider moving from threading to [concurrent](https://docs.python.org/3/library/concurrent.futures.html)

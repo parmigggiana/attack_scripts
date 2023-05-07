@@ -1,8 +1,9 @@
 import json
+
 from jsonschema import validate
 
-from milkman.singleton import SingletonMeta
 from milkman.logger import logger
+from milkman.singleton import SingletonMeta
 
 
 class Config(dict, metaclass=SingletonMeta):

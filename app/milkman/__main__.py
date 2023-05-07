@@ -1,52 +1,48 @@
 import os
 import time
+import signal
 
-import multiprocessing as mp
+from concurrent.futures import ProcessPoolExecutor
 
 from milkman.config import Config
 from milkman.logger import logger
 from milkman.exploits import Exploits
 from milkman.processes import GametickManager, FileObserver, FlagSubmitter
 
-configReloadQueue = mp.JoinableQueue()
-exploitsReloadEvent = mp.Event()
 conf = Config()
+
+
+def stop_handler():
+    print("SIGINT/SIGTERM received. Stopping app...")
+
+    os.killpg(os.getpgid(0), signal.SIGINT)  # send SIGINT to process group
 
 
 def main():
     # signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGINT, stop_handler)
+    signal.signal(signal.SIGTERM, stop_handler)
     log = logger.bind(file="app.log")
     log.info(f"Parent has PID = {os.getpid()}")
     log.info("Waiting for exploits to be loaded...")
     exploits = Exploits()
 
     while not exploits:  # keep refreshing until there's an exploit
-        time.sleep(5)
+        time.sleep(3)
     else:
         log.success("Done")
 
-    processes = []
-    processes.append(mp.Process(target=FileObserver, name="Config/Exploits Observer"))
+    executor = ProcessPoolExecutor(3)
+    executor.submit(FileObserver)
+    executor.submit(FlagSubmitter)
+    executor.submit(GametickManager)
 
-    processes.append(
-        mp.Process(
-            target=GametickManager,
-            name="Gametick Manager",
-        )
-    )
-    processes.append(mp.Process(target=FlagSubmitter, name="Flags Submitter"))
-
-    for p in processes:
-        p.start()
-    for p in processes:
-        p.join()
-        if p.exitcode != 0:
-            log.warning(f"Process {p.name} ended with status: {p.exitcode}")
-        else:
-            log.info(f"Process {p.name} ended successfully")
-        p.terminate()
+    executor.shutdown(
+        wait=True, cancel_futures=False
+    )  # waits for all tasks to finish first, so will hang
     return 0
 
 
 if __name__ == "__main__":
+    time.tzset()
     main()

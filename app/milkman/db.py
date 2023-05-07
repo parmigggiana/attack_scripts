@@ -1,6 +1,7 @@
+import uuid
 import random
 import pymongo
-import uuid
+
 from milkman.config import Config
 from milkman.logger import logger
 

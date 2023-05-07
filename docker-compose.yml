@@ -7,6 +7,8 @@ services:
       - 27017:27017
     restart: always
     hostname: mongo
+    environment:
+      TZ: Europe/Rome
     volumes:
       - ./db:/data/db
 
@@ -14,6 +16,8 @@ services:
     build: ./app
     restart: always
     hostname: app
+    environment:
+      TZ: Europe/Rome
     volumes:
       - ./app:/data/app
       - ./exploits:/data/exploits
@@ -26,6 +30,8 @@ services:
       - 5000:5000
     restart: always
     hostname: web
+    environment:
+      TZ: Europe/Rome
     volumes:
       - ./web:/data/web
       - logs:/data/logs

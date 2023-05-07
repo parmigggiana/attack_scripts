@@ -1,6 +1,11 @@
-from multiprocessing import JoinableQueue
-from threading import Thread
+import os
+import sys
 import time
+import signal
+
+from threading import Thread
+from multiprocessing import JoinableQueue
+
 from milkman.config import Config
 from milkman.exploits import Exploits
 from milkman.logger import logger
@@ -11,6 +16,12 @@ In earlier versions we were spawning n threads and handling synchronization in t
 
 
 conf = Config()
+
+
+def sigint_handler():
+    print("stopping gametick")
+    os.killpg(os.getpgid(0), signal.SIGINT)
+    sys.exit(0)
 
 
 def timeCounterThread(n, gametickQueue: JoinableQueue):
@@ -50,6 +61,8 @@ def launchAttack(exploit, target_ip: str, gametickQueue):
 
 
 def GametickManager():
+    signal.signal(signal.SIGINT, sigint_handler)
+
     tick_n = 0
     log = logger.bind(file="gameloop.log")
     exploits = Exploits()

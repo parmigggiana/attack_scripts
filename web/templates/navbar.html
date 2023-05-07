@@ -1,0 +1,30 @@
+<nav class="m-4 p-2 bg-primary rounded-lg shadow flex items-center justify-between">
+    <!-- Navbar che contiene 2 item => [primo item logo + button tabs ||| secondo item status] -->
+    <div id="nav_item1-logo_action-" class="flex items-center gap-5">
+        <!--Primo item che contiene logo e "tabs"-->
+        <h1 id="logo" class="m-2 text-xl">M1lkExpl0it</h1>
+        <div id="tabs_nav_link">
+            <ul class="flex flex-wrap gap-2"> <!-- Tabs -->
+                <li> <a @click="activeTab = 'logs'" :class="{ 'button-active bg-viola': activeTab === 'logs' }"
+                        href="/logs" class="button px-4 py-2 rounded-lg transition">
+                        Logs </a>
+                </li>
+                <li> <a @click="activeTab = 'configs'" :class="{ 'button-active bg-viola': activeTab === 'configs' }"
+                        href="/configs" class="button px-4 py-2 rounded-lg transition">
+                        Configs </a>
+                </li>
+                <li> <a @click="activeTab = 'exploits'" :class="{ 'button-active bg-viola': activeTab === 'exploits' }"
+                        href="/exploits" class="button px-4 py-2 rounded-lg transition">
+                        Exploits </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div id="nav_item2-status-"> <!-- Secondo item, status -->
+        <div>
+            <button class="px-4 py-2 bg-secondary rounded-lg shadow" @mouseover="showDropdown = true"
+                @mouseleave="showDropdown = false" @click="showDropdown = !showDropdown" class="button">Status</button>
+        </div>
+    </div>
+</nav>
+{% include "status.html" %}
