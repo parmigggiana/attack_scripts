@@ -1,13 +1,18 @@
 [project]
 name = "milkman"
-version = "0.0.2"
+version = "0.1.0"
 dependencies = [
     "requests",
     "pymongo",
     "watchdog",
     "inotify",
     "loguru",
-    "jsonschema"
+    "jsonschema",
+    "pwntools",
+    "pycryptodome",
+    "pillow",
+    "numpy",
+    "randcrack"
 ]
 
 [build-system]
