@@ -1,6 +1,4 @@
-import sys
 import time
-import signal
 
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
@@ -10,14 +8,6 @@ from milkman.exploits import Exploits
 from milkman.logger import logger
 
 observers = []
-
-
-def sigint_handler():
-    print("stopping observer")
-    for obs in observers:
-        obs.stop()
-        obs.join()
-    sys.exit(0)
 
 
 class ExploitsModHandler(FileSystemEventHandler):
@@ -48,8 +38,6 @@ class ConfigModHandler(FileSystemEventHandler):
 
 
 def FileObserver():
-    signal.signal(signal.SIGINT, sigint_handler)
-
     log = logger.bind(file="observer.log")
 
     exploitsObserver = Observer()

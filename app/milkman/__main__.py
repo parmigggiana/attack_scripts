@@ -1,27 +1,15 @@
 import os
 import time
-import signal
 
 from concurrent.futures import ProcessPoolExecutor
 
-from milkman.config import Config
+# Part of the threads getting spawned by the main process are due to loguru - there's one for each sink
 from milkman.logger import logger
 from milkman.exploits import Exploits
 from milkman.processes import GametickManager, FileObserver, FlagSubmitter
 
-conf = Config()
-
-
-def stop_handler():
-    print("SIGINT/SIGTERM received. Stopping app...")
-
-    os.killpg(os.getpgid(0), signal.SIGINT)  # send SIGINT to process group
-
 
 def main():
-    # signal.signal(signal.SIGINT, signal_handler)
-    signal.signal(signal.SIGINT, stop_handler)
-    signal.signal(signal.SIGTERM, stop_handler)
     log = logger.bind(file="app.log")
     log.info(f"Parent has PID = {os.getpid()}")
     log.info("Waiting for exploits to be loaded...")
@@ -44,5 +32,4 @@ def main():
 
 
 if __name__ == "__main__":
-    time.tzset()
     main()

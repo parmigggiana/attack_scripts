@@ -1,5 +1,4 @@
-import json
-
+from json import load
 from jsonschema import validate
 
 from milkman.logger import logger
@@ -26,13 +25,13 @@ class Config(dict, metaclass=SingletonMeta):
 
     def load_configs(self) -> None:
         with open("../config.json", "r") as f:  # relative to CWD
-            x: dict = json.load(f)
+            x: dict = load(f)
             try:
                 validate(x, self.schema)
                 for key, value in x.items():
                     self[key] = value
             except Exception:
-                logger.exception()
+                logger.exception(f"Invalid config")
                 return
 
 

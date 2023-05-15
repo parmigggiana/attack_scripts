@@ -2,7 +2,7 @@
 {% block head %}
 {{ super() }}
 <script>
-    var socket = io(windows.location.host + '/logs', { rememberTransport: false });
+            var socket = io(window.location.host, { rememberTransport: false });
     socket.on('connect', function () {
         socket.emit('connected', {});
     });

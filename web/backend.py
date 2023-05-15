@@ -1,4 +1,3 @@
-import time
 import watchdog
 
 from pathlib import Path
@@ -19,7 +18,6 @@ logger.add(
 )
 app = Flask(__name__)
 socketio = SocketIO(app)
-async_mode = socketio.async_mode
 channels = list(Path(logs_dir).glob("**/*.log"))
 host = "0.0.0.0"
 port = 5000
@@ -61,8 +59,6 @@ def handle_connect(data):
 
 
 def getLogs(filename):
-    # print(f"{filename = }")
-    # print(filename)
     with open(filename, "r") as f:
         l = f.readlines()[-max_lines:]
         return "".join(l)
@@ -76,7 +72,7 @@ class eventHandler(watchdog.events.FileSystemEventHandler):
             socketio.emit(event.src_path, getLogs(event.src_path))
 
 
-def runObeserver():
+def runObserver():
     obs = watchdog.observers.Observer()
     obs.schedule(eventHandler(), path=logs_dir, recursive=True)
     obs.start()
@@ -84,7 +80,7 @@ def runObeserver():
 
 def main():
     logger.info("Starting Observer Thread")
-    t = Thread(target=runObeserver)
+    t = Thread(target=runObserver)
     t.start()
     logger.info(f"Starting webserver on {host}:{port}")
     socketio.run(app, host=host, port=port, debug=debug)
@@ -92,5 +88,4 @@ def main():
 
 
 if __name__ == "__main__":
-    time.tzset()
     main()

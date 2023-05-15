@@ -1,7 +1,7 @@
 # A collection of scripts to simplify testing and deploying attacks in attack-defence CTFs
 All you need to do is write the exploit for a single target! `test_attack` will 
 help you check that everything works as intended. Just run
-`docker compose --build up` and you're ready to go. Put your exploits in the `exploits` directory; they will be automatically be run in parallel threads against every target. Easily monitor the logs, change configs, upload your exploits or update them on the fly through the WebUI, open on by default on `localhost:5000`
+`docker compose --build up` and you're ready to go. Put your exploits in the `exploits` directory; they will automatically be run in parallel threads against every target. Easily monitor the logs, change configs, upload your exploits or update them on the fly through the WebUI, by default on `localhost:5000`
 
 ## Requirements
 - [`docker`](https://docs.docker.com/engine/install/) and [`docker compose`](https://docs.docker.com/compose/install/linux/)
@@ -153,4 +153,4 @@ def share(target_ip):
 - [x] Change directory structure to something sensible
 - [x] Consider moving from multiprocessing to [concurrent](https://docs.python.org/3/library/concurrent.futures.html)
 - [ ] Consider moving from threading to [concurrent](https://docs.python.org/3/library/concurrent.futures.html)
-- [ ] Fix resources leaking and app not stopping properly
+- [ ] Fix resources leaking
