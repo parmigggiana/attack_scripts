@@ -1,7 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Bruno+Ace+SC&family=Fira+Code&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=open+sans&family=Comfortaa&family=Fira+Code&display=swap');
 *{
-    font-family: 'Fira Code', monospace;
+    font-family: 'Open Sans', regular;
 }
 #logo{
-    font-family: 'Bruno Ace SC', cursive;
+    font-family: 'Comfortaa', regular;
+    }
+    
+    code {
+        font-family: "Fira Code", monospace;
 }
