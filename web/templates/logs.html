@@ -2,35 +2,44 @@
 {% block head %}
 {{ super() }}
 <script>
-            var socket = io(window.location.host, { rememberTransport: false });
-    socket.on('connect', function () {
-        socket.emit('connected', {});
-    });
-    {% for ch in channels %}
-    socket.on('{{ ch }}', (file) => {
-        document.getElementById('{{ ch }}').innerText = file;
-    });
-    {% endfor %}
+          var socket = io(window.location.host, { rememberTransport: false });
+  socket.on('connect', function () {
+      socket.emit('connected', {});
+  });
+  {% for ch in channels %}
+  socket.on('{{ ch }}', (file) => {
+      document.getElementById('{{ ch }}').innerText = file;
+  });
+  {% endfor %}
 </script>
 {% endblock %}
-
 {% block content %}
 <div x-data="{ activeTab: 'tab1' }">
-    <div id="containe_ul_tabs">
-        <ul class="flex flex-wrap gap-2 mt-10 m-2 p-4 bg-primary rounded-lg shadow">
-            {% for ch in channels %}
-            <li><a @click.prevent="activeTab = '{{ ch }}'"
-                    :class="{ 'button-active bg-viola': activeTab === '{{ ch }}' }" href="#{{ ch }}"
-                    class="button px-4 py-2 rounded-lg transition">{{ ch.name.split('.')[0] }}</a></li>
-            {% endfor %}
-        </ul>
+  <div id="containe_ul_tabs">
+    <ul class="flex flex-wrap gap-2 mt-10 m-2 p-4 bg-primary rounded-lg shadow">
+      {% for ch in channels %}
+      <li>
+        <a
+          @click.prevent="activeTab = '{{ ch }}'"
+          :class="{ 'button-active bg-viola': activeTab === '{{ ch }}' }"
+          href="#{{ ch }}"
+          class="button px-4 py-2 rounded-lg transition"
+          >{{ ch.name.split('.')[0] }}</a
+        >
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  <div class="content">
+    {% for ch in channels %}
+    <div
+      x-cloak
+      x-show="activeTab === '{{ ch }}'"
+      class="m-2 p-2 bg-primary rounded-lg shadow max-w-5xl"
+    >
+      <pre><code id="{{ ch }}"></code></pre>
     </div>
-    <div class="content">
-        {% for ch in channels %}
-        <div x-cloak x-show="activeTab === '{{ ch }}'" class="m-2 p-2 bg-primary rounded-lg shadow max-w-5xl">
-            <pre><code id="{{ ch }}"></code></pre>
-        </div>
-        {% endfor %}
-    </div>
+    {% endfor %}
+  </div>
 </div>
 {% endblock %}
