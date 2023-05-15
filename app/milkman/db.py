@@ -1,3 +1,4 @@
+import re
 import uuid
 import random
 import pymongo
@@ -5,8 +6,9 @@ import pymongo
 from milkman.config import Config
 from milkman.logger import logger
 
+conf = Config()
 try:
-    db_client = pymongo.MongoClient(Config()["db_url"])
+    db_client = pymongo.MongoClient(conf["db_url"])
     db = db_client["ctf"]
     collection = db["flags"]
 except Exception as e:
@@ -18,12 +20,22 @@ except Exception as e:
 
 def save_flags(flags: list[str]):
     log = logger.bind(file="db.log")
+    valid_flags = []
 
-    d = [{"_id": flag, "status": "unknown"} for flag in flags]
+    if isinstance(flags, str):
+        flags = [flags]
 
-    res = collection.insert_many(d, ordered=False)
+    for flag in flags:
+        if re.match(pattern=conf["flag_regex"], string=flag):
+            valid_flags.append(flag)
+        else:
+            log.warning(f"Received flag that doesn't match regex: {flag}")
 
-    return res
+    if valid_flags:
+        d = [{"_id": flag, "status": "unknown"} for flag in valid_flags]
+        log.info(f"Storing valid flags: {valid_flags}")
+        res = collection.insert_many(d, ordered=False)
+        return res
 
 
 def getNewFlags() -> list[str]:
