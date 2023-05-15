@@ -20,9 +20,9 @@ services:
       TZ: Europe/Rome
     volumes:
       - ./app:/data/app
-      - ./exploits:/data/exploits
       - ./config.json:/data/config.json
       - logs:/data/logs
+      - exploits:/data/exploits
 
   web:
     build: ./web
@@ -35,6 +35,8 @@ services:
     volumes:
       - ./web:/data/web
       - logs:/data/logs
+      - exploits:/data/exploits
+
 
 volumes:
   logs:
@@ -43,3 +45,9 @@ volumes:
       type: 'none'
       o: 'bind'
       device: './logs'
+  exploits:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './exploits'

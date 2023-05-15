@@ -5,7 +5,7 @@ from loguru import logger
 from threading import Thread
 from flask_cors import CORS
 from flask_socketio import SocketIO
-from flask import Flask, jsonify, redirect, render_template
+from flask import Flask, jsonify, redirect, render_template, request
 
 logs_dir = "../logs"
 max_lines = 50  # Lenght of history for the frontend
@@ -41,8 +41,13 @@ def configs():
     return render_template("configs.html")
 
 
-@app.route("/exploits")
+@app.route("/exploits", methods=["GET", "POST"])
 def exploits():
+    if request.method == "POST":
+        filename = request.files["exploit_file"].filename
+        if filename:
+            file = request.files["exploit_file"]
+            file.save(f"../exploits/{filename}")
     return render_template("exploits.html")
 
 
