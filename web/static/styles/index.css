@@ -1,11 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=open+sans&family=Comfortaa&family=Fira+Code&display=swap');
-*{
-    font-family: 'Open Sans', regular;
+@import url("https://fonts.googleapis.com/css2?family=open+sans&family=Comfortaa&family=Fira+Code&display=swap");
+* {
+  font-family: "Open Sans", regular;
 }
-#logo{
-    font-family: 'Comfortaa', regular;
-    }
-    
-    code {
-        font-family: "Fira Code", monospace;
+#logo {
+  font-family: "Comfortaa", regular;
+}
+code {
+  font-family: "Fira Code", monospace;
 }
