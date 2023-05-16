@@ -19,20 +19,20 @@
         </li>
         <li>
           <a
-            :class="{ 'button-active bg-viola': '{{ url_for(request.endpoint) }}' === '/logs' }"
-            href="/logs"
-            class="button px-4 py-2 rounded-lg transition"
-          >
-            Logs
-          </a>
-        </li>
-        <li>
-          <a
             :class="{ 'button-active bg-viola': '{{ url_for(request.endpoint) }}' === '/configs' }"
             href="/configs"
             class="button px-4 py-2 rounded-lg transition"
           >
             Configs
+          </a>
+        </li>
+        <li>
+          <a
+            :class="{ 'button-active bg-viola': '{{ url_for(request.endpoint) }}' === '/logs' }"
+            href="/logs"
+            class="button px-4 py-2 rounded-lg transition"
+          >
+            Logs
           </a>
         </li>
       </ul>
