@@ -9,6 +9,9 @@ from flask import Flask, jsonify, redirect, render_template, request
 
 logs_dir = "../logs"
 max_lines = 50  # Lenght of history for the frontend
+p = Path("../exploits")
+exploitsfiles = list(p.glob("**/[!_]*.py"))
+
 
 logger.add(
     sink=f"{logs_dir}/backend.log",
@@ -48,7 +51,7 @@ def exploits():
         if filename:
             file = request.files["exploit_file"]
             file.save(f"../exploits/{filename}")
-    return render_template("exploits.html")
+    return render_template("exploits.html", exploits=[e.name for e in exploitsfiles])
 
 
 @app.route("/", methods=["GET"])
@@ -69,17 +72,24 @@ def getLogs(filename):
         return "".join(l)
 
 
-class eventHandler(watchdog.events.FileSystemEventHandler):
+class logsHandler(watchdog.events.FileSystemEventHandler):
     def on_modified(self, event: watchdog.events.FileSystemEvent):
         super().on_modified(event)
         if not event.is_directory:
-            # logger.debug("Emitting on socketio")
             socketio.emit(event.src_path, getLogs(event.src_path))
+
+
+class newfileHandler(watchdog.events.FileSystemEventHandler):
+    def on_modified(self, event: watchdog.events.FileSystemEvent):
+        super().on_modified(event)
+        global exploitsfiles
+        exploitsfiles = list(p.glob("**/[!_]*.py"))
 
 
 def runObserver():
     obs = watchdog.observers.Observer()
-    obs.schedule(eventHandler(), path=logs_dir, recursive=True)
+    obs.schedule(logsHandler(), path=logs_dir, recursive=True)
+    obs.schedule(newfileHandler(), path=p, recursive=True)
     obs.start()
 
 
