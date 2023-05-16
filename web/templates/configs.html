@@ -1,13 +1,67 @@
-{% extends "base.html" %}
-{% block content %}
+{% extends "base.html" %} {% block head %} {{ super() }}
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.21.0/ace.js"
+  integrity="sha512-Fv048ivDjkHY/u2gRxmZCeewXHbP/f17sH3KPpyfkVlmNrbzR3EVVoEzLBoB44o3GRw7CRUobhrv5j0M0VaTFA=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+></script>
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.21.0/mode-json.min.js"
+  integrity="sha512-K+H+3WTfhwE9fnfv4makUYJxz4kwIadQPOjGHAmOT96FtMSPRnvnuGR/sZjuNB2MmmHQ94Mnc9zoDxTHKMMEww=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+></script>
+<script>
+  function saveButtonHandler() {
+    var newfile = editor.getValue();
+    var req = fetch("/configs", {
+      method: "post",
+      body: newfile,
+    }); // returns a promise
+
+    req.then(
+      async function (response) {
+        // returns status + response headers
+        // but not yet the body,
+        // for that call `response[text() || json() || arrayBuffer()]` <-- also promise
+
+        if (response.ok) {
+          color = "bg-verde"
+        } else {
+          color = "bg-rosso"
+        }
+          document.getElementById("savebutton").classList.remove('bg-viola');
+          document.getElementById("savebutton").classList.add(color);
+          await new Promise(resolve => setTimeout(resolve, 1300));
+          document.getElementById("savebutton").classList.remove(color);
+          document.getElementById("savebutton").classList.add('bg-viola');
+      },
+      function (error) {
+        console.error("failed due to network error or cross domain");
+      }
+    );
+  }
+</script>
+{% endblock %} {% block content %}
 <div class="flex flex-col">
-  <textarea
-    class="p-4 bg-primary rounded-lg shadow resize-none focus:outline-none h-[calc(75vh)]"
-  ></textarea>
+  <div
+    id="editor"
+    class="p-4 bg-primary rounded-lg shadow resize-none h-[calc(80vh)]"
+  >{{ filestring }}
+  </div>
+
   <button
-    class="self-end px-4 py-2 bg-viola text-white rounded-lg shadow mt-4 mr-4 focus:bg-verde transition focus:outline-none"
+    id="savebutton"
+    class="self-end px-4 py-2 text-white rounded-lg shadow mt-4 mr-4 transition bg-viola"
+    onclick="saveButtonHandler();"
   >
     Save
   </button>
+
+  <script>
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/twilight");
+    editor.session.setMode("ace/mode/json");
+  </script>
 </div>
 {% endblock %}

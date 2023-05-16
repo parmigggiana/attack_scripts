@@ -24,7 +24,7 @@ class Config(dict, metaclass=SingletonMeta):
         self.load_configs()
 
     def load_configs(self) -> None:
-        with open("../config.json", "r") as f:  # relative to CWD
+        with open("../configs/config.json", "r") as f:  # relative to CWD
             x: dict = load(f)
             try:
                 validate(x, self.schema)

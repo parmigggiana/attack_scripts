@@ -12,7 +12,6 @@ max_lines = 50  # Lenght of history for the frontend
 p = Path("../exploits")
 exploitsfiles = list(p.glob("**/[!_]*.py"))
 
-
 logger.add(
     sink=f"{logs_dir}/backend.log",
     format="{time:HH:mm:ss.SS} [{level:^8}] : {message}",
@@ -39,9 +38,15 @@ def logs():
     return render_template("logs.html", channels=channels)
 
 
-@app.route("/configs")
+@app.route("/configs", methods=["GET", "POST"])
 def configs():
-    return render_template("configs.html")
+    if request.method == "POST":
+        filestr = request.data.decode()
+        with open("../configs/config.json", "w") as f:
+            f.write(filestr)
+    with open("../configs/config.json", "r") as f:
+        configsfilestring = f.read()
+    return render_template("configs.html", filestring=configsfilestring)
 
 
 @app.route("/exploits", methods=["GET", "POST"])
