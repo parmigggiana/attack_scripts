@@ -3,6 +3,7 @@ import watchdog
 from pathlib import Path
 from loguru import logger
 from threading import Thread
+from ansi2html import Ansi2HTMLConverter
 from flask_cors import CORS
 from flask_socketio import SocketIO
 from flask import Flask, jsonify, redirect, render_template, request
@@ -11,12 +12,15 @@ logs_dir = "../logs"
 max_lines = 50  # Lenght of history for the frontend
 p = Path("../exploits")
 exploitsfiles = list(p.glob("**/[!_]*.py"))
+conv = Ansi2HTMLConverter(inline=True, scheme="osx")
+
 
 logger.add(
     sink=f"{logs_dir}/backend.log",
-    format="{time:HH:mm:ss.SS} [{level:^8}] : {message}",
+    format="<d>{time:HH:mm:ss.SS}</d> | <level>{level:^8}</level> | {message}",
     enqueue=True,
     level="INFO",
+    colorize=True,
 )
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -74,7 +78,8 @@ def handle_connect(data):
 def getLogs(filename):
     with open(filename, "r") as f:
         l = f.readlines()[-max_lines:]
-        return "".join(l)
+        html_lines = [conv.convert(line, full=False) for line in l]
+        return "".join(html_lines)
 
 
 class logsHandler(watchdog.events.FileSystemEventHandler):

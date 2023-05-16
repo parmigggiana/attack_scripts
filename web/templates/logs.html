@@ -1,19 +1,16 @@
-{% extends "base.html" %}
-{% block head %}
-{{ super() }}
+{% extends "base.html" %} {% block head %} {{ super() }}
 <script>
-          var socket = io(window.location.host, { rememberTransport: false });
+  var socket = io(window.location.host, { rememberTransport: false });
   socket.on('connect', function () {
       socket.emit('connected', {});
   });
   {% for ch in channels %}
   socket.on('{{ ch }}', (file) => {
-      document.getElementById('{{ ch }}').innerText = file;
+      document.getElementById('{{ ch }}').innerHTML = file;
   });
   {% endfor %}
 </script>
-{% endblock %}
-{% block content %}
+{% endblock %} {% block content %}
 <div x-data="{ activeTab: 'tab1' }">
   <div id="containe_ul_tabs">
     <ul class="flex flex-wrap gap-2 mt-10 m-2 p-4 bg-primary rounded-lg shadow">
@@ -35,7 +32,7 @@
     <div
       x-cloak
       x-show="activeTab === '{{ ch }}'"
-      class="m-2 p-2 bg-primary rounded-lg shadow max-w-5xl"
+      class="m-2 p-2 bg-primary rounded-lg shadow max-w-5xl h-[75vh] overflow-scroll"
     >
       <pre><code id="{{ ch }}"></code></pre>
     </div>
