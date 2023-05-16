@@ -38,7 +38,6 @@ services:
       - exploits:/data/exploits
       - configs:/data/configs
 
-
 volumes:
   logs:
     driver: local
@@ -46,12 +45,14 @@ volumes:
       type: 'none'
       o: 'bind'
       device: './logs'
+
   exploits:
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
       device: './exploits'
+
   configs:
     driver: local
     driver_opts:
