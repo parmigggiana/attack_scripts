@@ -21,14 +21,14 @@ def timeCounterThread(n, gametickQueue: JoinableQueue, threads: list[Thread]):
     tick = conf["tick_duration"]
     for i in range(len(Exploits()) * conf["highest_id"]):
         gametickQueue.put(i)
-    start = time.perf_counter()
+    start = time.time()
     while gametickQueue._notempty:
         pass
     gametickQueue.join()
     for t in threads:
         t.join()
     gametickQueue.close()
-    elapsed = time.perf_counter() - start
+    elapsed = time.time() - start
     remaining = tick - elapsed
     if remaining < 0:
         log.warning(f"Tick {n} took more than {tick:.2f} seconds!")
@@ -43,9 +43,9 @@ def launchAttack(exploit, target_ip: str, gametickQueue):
     level = "INFO"
 
     gametickQueue.get()
-    start = time.perf_counter()
+    start = time.time()
     flags = exploit(target_ip)
-    elapsed = time.perf_counter() - start
+    elapsed = time.time() - start
     gametickQueue.task_done()
 
     save_flags(flags)

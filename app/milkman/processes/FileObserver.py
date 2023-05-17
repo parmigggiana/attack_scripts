@@ -14,27 +14,27 @@ class ExploitsModHandler(FileSystemEventHandler):
     def __init__(self) -> None:
         super().__init__()
 
-        self.last_trigger = time.perf_counter()
+        self.last_trigger = time.time()
 
     def on_modified(self, event):
-        if (time.perf_counter() - self.last_trigger) > 1:
+        if (time.time() - self.last_trigger) > 1:
             logger.info("Reloading exploits", extra={"file": "observer.log"})
             Exploits().load_exploits()
-            self.last_trigger = time.perf_counter()
+            self.last_trigger = time.time()
 
 
 class ConfigModHandler(FileSystemEventHandler):
     def __init__(self) -> None:
         super().__init__()
 
-        self.last_trigger = time.perf_counter()
+        self.last_trigger = time.time()
 
     def on_modified(self, event):
-        trigger = time.perf_counter()
+        trigger = time.time()
         if (trigger - self.last_trigger) > 0.5:  # Added debouncing
             logger.info("Reloading configs", extra={"file": "observer.log"})
             Config().load_configs()
-            self.last_trigger = time.perf_counter()
+            self.last_trigger = time.time()
 
 
 def FileObserver():

@@ -6,7 +6,7 @@ from milkman.logger import logger
 from milkman.db import getNewFlags, updateFlags
 
 
-def submit_flags(flags: str | list[str]):
+def submit_flags(flags: list[str]):
     conf = Config()
 
     log = logger.bind(file="flagsubmitter.log")
@@ -29,13 +29,16 @@ def submit_flags(flags: str | list[str]):
         log.critical(f"JSON decoding error!\n{response = }")
         raise e
 
+    except Exception as e:
+        log.critical(f"Unhandled exception was raise!\n{e}")
+
 
 def FlagSubmitter():
     log = logger.bind(file="flagsubmitter.log")
     conf = Config()
 
     while True:
-        s = time.perf_counter()
+        s = time.time()
 
         flags = getNewFlags()
         if flags:
@@ -45,6 +48,6 @@ def FlagSubmitter():
         else:
             log.info("There is no new flags")
 
-        remaining = conf["flag_submission_delay"] - (time.perf_counter() - s)
+        remaining = conf["flag_submission_delay"] - (time.time() - s)
         if remaining > 0:
             time.sleep(remaining)
