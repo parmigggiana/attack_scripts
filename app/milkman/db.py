@@ -23,11 +23,16 @@ def save_flags(flags: list[str]):
     valid_flags = []
 
     if isinstance(flags, str):
-        flags = [flags]
-
+        flags = [
+            flags,
+        ]
     for flag in flags:
-        if re.match(pattern=conf["flag_regex"], string=flag):
-            valid_flags.append(flag)
+        m = re.finditer(pattern=conf["flag_regex"], string=flag)
+        if m:
+            for f in m:
+                valid_flags.append(f.group())
+                log.debug(f"Got valid flag: {f.group()}")
+
         else:
             log.warning(f"Received flag that doesn't match regex: {flag}")
 

@@ -1,4 +1,5 @@
 import json
+import requests
 
 from pwn import log
 
@@ -19,8 +20,11 @@ def nop_test(exploit):
         nopteam = config["baseip"].format(id=0)
 
         flags = exploit(nopteam)
-        result = submit_flags(flags)
-        # TODO: add logic to check if everything is working with nopteam
+        try:
+            result = submit_flags(flags)
+            log.info(f"response from gameserver:\n{result}")
+        except Exception as e:
+            log.exception()
 
     return wrapper
 
@@ -33,6 +37,29 @@ def self_test(exploit):
         log.info(f"We caught {flags = }")
 
     return wrapper
+
+
+def submit_flags(flags: list[str]):
+    try:
+        response = requests.put(
+            "http://10.10.0.1:8080/flags",
+            headers={"X-Team-Token": config["TEAM_TOKEN"]},
+            json=flags,
+            timeout=5,
+        )
+        response = response.json()["Flags"]  # this is now a list
+        log.info(f"Got {response = }")
+        return response
+    except requests.ConnectTimeout as e:
+        log.critical("Gameserver is unreachable!")
+        raise e
+
+    except requests.JSONDecodeError as e:
+        log.critical(f"JSON decoding error!\n{response = }")
+        raise e
+
+    except Exception as e:
+        log.critical(f"Unhandled exception was raise!\n{e}")
 
 
 @local_test
