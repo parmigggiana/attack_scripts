@@ -11,7 +11,6 @@ from flask import Flask, jsonify, redirect, render_template, request
 logs_dir = "../logs"
 max_lines = 50  # Lenght of history for the frontend
 p = Path("../exploits")
-exploitsfiles = list(p.glob("**/[!_]*.py"))
 conv = Ansi2HTMLConverter(inline=True, scheme="osx")
 
 
@@ -60,6 +59,8 @@ def exploits():
         if filename:
             file = request.files["exploit_file"]
             file.save(f"../exploits/{filename}")
+
+    exploitsfiles = list(p.glob("**/[!_]*.py"))
     return render_template("exploits.html", exploits=[e.name for e in exploitsfiles])
 
 
@@ -89,18 +90,10 @@ class logsHandler(watchdog.events.FileSystemEventHandler):
             socketio.emit(event.src_path, getLogs(event.src_path))
 
 
-class newfileHandler(watchdog.events.FileSystemEventHandler):
-    def on_modified(self, event: watchdog.events.FileSystemEvent):
-        super().on_modified(event)
-        global exploitsfiles
-        exploitsfiles = list(p.glob("**/[!_]*.py"))
-
-
 def runObserver():
-    obs = watchdog.observers.Observer()
-    obs.schedule(logsHandler(), path=logs_dir, recursive=True)
-    obs.schedule(newfileHandler(), path=p, recursive=True)
-    obs.start()
+    obs1 = watchdog.observers.Observer()
+    obs1.schedule(logsHandler(), path=logs_dir, recursive=True)
+    obs1.start()
 
 
 def main():
