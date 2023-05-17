@@ -14,7 +14,7 @@ _conf = {
         },
         {
             "sink": f"{_logs_dir}/db.log",
-            "format": "<d>{time:HH:mm:ss.SS}</d> | <level>{level:^8}</level> | {message}",
+            "format": "<d>{time:HH:mm:ss.SS}</d> | <level>{level:<8}</level>\t{message}",
             "enqueue": True,
             "filter": lambda record: record["extra"]["file"] == "db.log",
             "level": "DEBUG",
@@ -22,7 +22,7 @@ _conf = {
         },
         {
             "sink": f"{_logs_dir}/exploits.log",
-            "format": "<d>{time:HH:mm:ss.SS}</d> | <level>{level:^8}</level> | {message}",
+            "format": "<d>{time:HH:mm:ss.SS}</d> | <level>{level:<8}</level>\t{message}",
             "enqueue": True,
             "filter": lambda record: record["extra"]["file"] == "exploits.log",
             "level": "DEBUG",
@@ -30,7 +30,7 @@ _conf = {
         },
         {
             "sink": f"{_logs_dir}/observer.log",
-            "format": "<d>{time:HH:mm:ss.SS}</d> | <level>{level:^8}</level> | {message}",
+            "format": "<d>{time:HH:mm:ss.SS}</d> | <level>{level:<8}</level>\t{message}",
             "enqueue": True,
             "filter": lambda record: record["extra"]["file"] == "observer.log",
             "level": "DEBUG",
@@ -38,7 +38,7 @@ _conf = {
         },
         {
             "sink": f"{_logs_dir}/gameloop.log",
-            "format": "<d>{time:HH:mm:ss.SS}</d> | <level>{level:^8}</level> | {message}",
+            "format": "<d>{time:HH:mm:ss.SS}</d> | <level>{level:<8}</level>\t{message}",
             "enqueue": True,
             "filter": lambda record: record["extra"]["file"] == "gameloop.log",
             "level": "DEBUG",
@@ -46,7 +46,7 @@ _conf = {
         },
         {
             "sink": f"{_logs_dir}/flagsubmitter.log",
-            "format": "<d>{time:HH:mm:ss.SS}</d> | <level>{level:^8}</level> | {message}",
+            "format": "<d>{time:HH:mm:ss.SS}</d> | <level>{level:<8}</level>\t{message}",
             "enqueue": True,
             "filter": lambda record: record["extra"]["file"] == "flagsubmitter.log",
             "level": "DEBUG",

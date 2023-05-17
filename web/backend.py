@@ -74,7 +74,7 @@ def exploits():
 
 @app.route("/", methods=["GET"])
 def index():
-    return redirect("/logs")
+    return redirect("/exploits")
 
 
 @socketio.on("connected")
