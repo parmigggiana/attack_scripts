@@ -23,7 +23,9 @@ logger.add(
 )
 app = Flask(__name__)
 socketio = SocketIO(app)
-channels = list(Path(logs_dir).glob("**/*.log"))
+channels = list(
+    Path(logs_dir).glob("**/*.log")
+)  # **/*.log for all subdirectories as well
 host = "0.0.0.0"
 port = 5000
 debug = True
@@ -38,7 +40,7 @@ def ping():
 
 @app.route("/logs")
 def logs():
-    return render_template("logs.html", channels=channels)
+    return render_template("logs.html", channels=list(Path(logs_dir).glob("*.log")))
 
 
 @app.route("/configs", methods=["GET", "POST"])
@@ -61,7 +63,13 @@ def exploits():
             file.save(f"../exploits/{filename}")
 
     exploitsfiles = list(p.glob("**/[!_]*.py"))
-    return render_template("exploits.html", exploits=[e.name for e in exploitsfiles])
+    files = {}
+    for expf in exploitsfiles:
+        with open(expf, "r") as f:
+            files[expf.name] = f.read().replace("\\", "\\\\")
+    return render_template(
+        "exploits.html", filenames=[e.name for e in exploitsfiles], files=files
+    )
 
 
 @app.route("/", methods=["GET"])
