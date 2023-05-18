@@ -1,5 +1,5 @@
 <nav
-  class="m-4 p-2 bg-primary rounded-lg shadow flex items-center justify-between"
+  class="static m-4 p-2 bg-primary rounded-lg shadow flex items-center justify-between"
 >
   <!-- Navbar che contiene 2 item => [primo item logo + button tabs ||| secondo item status] -->
   <div id="nav_item1-logo_action-" class="flex items-center gap-5">
@@ -43,7 +43,7 @@
     <div>
       <button
         class="px-4 py-2 bg-secondary rounded-lg shadow"
-        @mouseover="showDropdown = true"
+        @mouseenter="showDropdown = true"
         @mouseleave="showDropdown = false"
         @click="showDropdown = !showDropdown"
         class="button"
