@@ -1,11 +1,38 @@
 @import url("https://fonts.googleapis.com/css2?family=Comfortaa:wght@500&family=Fira+Code:wght@300;400&family=Open+Sans:wght@300;400&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
 * {
   font-family: "Open Sans", regular;
 }
 #logo {
-  font-family: "Comfortaa", medium;
+  /*font-family: "Comfortaa", medium;*/
+  font-family: 'VT323', monospace;
+  font-size: xx-large;
 }
 .ace_editor * {
   font-family: "Fira Code", light;
 }
+::-webkit-scrollbar{
+  width: 9px !important;
+  height: 9px !important;
+  background-color: #2c2c2c;
+  border-radius: 20px;
+}
+::-webkit-scrollbar-thumb{
+  background-color: #821AC2 !important;
+  border-radius: 20px;
+  width: 6px;
+  size: 20px;
+}
+::-webkit-scrollbar-corner{
+  background-color: #2c2c2c;
+  border-radius: 20px;
+}
+/* ::-webkit-scrollbar-track{
+  border-radius: 20px;
+  size: 20px;
+  background-color: #212121;
+} */
+
+/*primary: "#2C2C2C",
+        secondary: "#212121",

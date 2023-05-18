@@ -13,7 +13,7 @@
 {% endblock %} {% block content %}
 <div x-data="{ activeTab: 'tab1' }">
   <div id="containe_ul_tabs">
-    <ul class="flex flex-wrap gap-2 mt-10 m-2 p-4 bg-primary rounded-lg shadow">
+    <ul class="flex flex-wrap gap-2 mt-4 m-2 mr-4 ml-4 p-4 bg-primary rounded-lg shadow">
       {% for ch in channels %}
       <li>
         <a
@@ -32,7 +32,7 @@
     <div
       x-cloak
       x-show="activeTab === '{{ ch }}'"
-      class="m-2 p-2 bg-primary rounded-lg shadow max-w-5xl h-[75vh] overflow-scroll"
+      class="m-2 p-2 bg-primary rounded-lg shadow mr-4 h-[calc(80vh)] ml-4 overflow-scroll"
     >
       <pre><code id="{{ ch }}"></code></pre>
     </div>
