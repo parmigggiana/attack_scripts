@@ -30,7 +30,7 @@
 
   <body class="bg-secondary text-white">
     <!--Inizio sezione mobile -->
-    <div id="mobile" class="lg:hidden">
+    <div id="mobile" class="md:hidden">
       <div
         id="oh_no"
         class="flex flex-col items-center m-4 p-2 bg-primary rounded-lg gap-4 text-center"
@@ -47,7 +47,7 @@
       </div>
     </div>
     <!--Fine sezione mobile -->
-    <div id="large" class="hidden lg:block" x-data="{ activeTab: 'logs' }">
+    <div id="large" class="hidden md:block" x-data="{ activeTab: 'logs' }">
       <!-- Passiamo x-data per le tabs, non quelle effettive interne di logs ma quelle per la navbar -->
       <div x-data="{ showDropdown: false }">
         <!-- Div fantasma, serve solamente per non far buggare lo status e le tab -->

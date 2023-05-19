@@ -60,7 +60,15 @@
 
   <script>
     var editor = ace.edit("editor");
-    editor.setTheme("ace/theme/twilight");
+    editor.setOptions({
+      animatedScroll: true,
+      cursorStyle: "slim",
+      enableAutoIndent: true,
+      fontFamily: "Fira Code",
+      fontSize: 13,
+      wrapBehavioursEnabled: true,
+      theme: "ace/theme/gruvbox", // or twilight or monokai
+    });
     editor.session.setMode("ace/mode/json");
   </script>
 </div>

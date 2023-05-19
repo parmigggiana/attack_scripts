@@ -1,14 +1,18 @@
 {
     "team_id": 77,
-    "highest_id": 20,
+    "highest_id": 2,
     "TEAM_TOKEN": "b0d9d5b0307be878aa00e935e230d2d",
     "max_thread_time": 90,
     "tick_duration": 120,
     "flag_regex": "[A-Z0-9]{31}=",
     "baseip": "10.60.{id}.1",
     "db_url": "mongodb://mongo:27017/",
-    "flag_submission_delay": 60
+    "flag_submission_delay": 5
 }
+  
+  
+  
+  
   
   
   
