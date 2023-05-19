@@ -27,7 +27,7 @@ services:
   web:
     build: ./web
     ports:
-      - 5000:7070
+      - 7070:5000
     restart: always
     hostname: web
     environment:
