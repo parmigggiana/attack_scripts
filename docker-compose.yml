@@ -3,8 +3,8 @@ version: '3.8'
 services:
   mongo:
     image: mongo
-#    ports:
-#      - 27017:27017
+    ports:
+      - 27017:27017
     restart: always
     hostname: mongo
     environment:
@@ -27,7 +27,7 @@ services:
   web:
     build: ./web
     ports:
-      - 7070:5000
+      - 7070:7070
     restart: always
     hostname: web
     environment:
