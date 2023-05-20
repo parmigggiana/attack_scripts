@@ -1,3 +1,4 @@
+import os
 import time
 
 from threading import Thread
@@ -44,6 +45,7 @@ def launchAttack(exploit, target_ip: str, gametickQueue):
 
     gametickQueue.get()
     start = time.time()
+
     flags = exploit(target_ip)
     elapsed = time.time() - start
     gametickQueue.task_done()
@@ -73,6 +75,9 @@ def GametickManager():
                 if id == conf["team_id"]:
                     continue
                 target_ip = conf["baseip"].format(id=id)
+                if os.system("ping -c 1 " + target_ip + " > /dev/null") != 0:
+                    log.info(f"{target_ip} is unreachable")
+                    continue
                 t = Thread(
                     target=launchAttack,
                     args=(
