@@ -10,5 +10,8 @@ COPY milkman/* milkman
 # Install Python dependencies
 RUN pip install --no-cache-dir -e .
 
+
+RUN apt update && apt install iputils-ping -y
+
 # Start the app
 CMD ["python", "-m", "milkman"]
