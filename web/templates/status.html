@@ -1,4 +1,14 @@
 <!-- Status element -->
+<script>
+  var socket = io(window.location.host, { rememberTransport: false });
+  socket.on('connect', function () {
+      socket.emit('statusconnected', {});
+  });
+  var logpath = ''
+  socket.on('status', (file) => {
+      document.getElementById('services').innerHTML = file;
+  });
+</script>
 <div
   id="services"
   class="absolute right-4 top-20 z-10 origin-top rounded-lg bg-light_gray shadow-md focus:outline-none"
@@ -11,20 +21,4 @@
   x-transition:leave-start="opacity-100 scale-100"
   x-transition:leave-end="opacity-0 scale-90"
 >
-  <div id="service_1" class="flex items-center gap-3 p-2 bg-scuro">
-    <p>Service 1:</p>
-    <div id="service_palle" class="flex items-center gap-2">
-      <div class="rounded-full p-2 bg-verde"></div>
-      <div class="rounded-full p-2 bg-verde"></div>
-      <div class="rounded-full p-2 bg-verde"></div>
-    </div>
-  </div>
-  <div id="service_2" class="flex items-center gap-3 p-2 bg-scuro">
-    <p>Service 2:</p>
-    <div id="service_palle" class="flex items-center gap-2">
-      <div class="rounded-full p-2 bg-verde"></div>
-      <div class="rounded-full p-2 bg-verde"></div>
-      <div class="rounded-full p-2 bg-verde"></div>
-    </div>
-  </div>
 </div>
