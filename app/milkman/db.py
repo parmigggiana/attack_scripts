@@ -37,23 +37,25 @@ def save_flags(flags: list[str]):
             log.warning(f"Received flag that doesn't match regex: {flag}")
 
     if valid_flags:
-        d = [{"_id": flag, "status": "unknown"} for flag in valid_flags]
+        d = [{"_id": flag, "status": "Unknown"} for flag in valid_flags]
         log.info(f"Storing valid flags: {valid_flags}")
-        res = collection.insert_many(d, ordered=False)
-        return res
+        try:
+            res = collection.insert_many(d, ordered=False)
+            return res
+        except pymongo.errors.BulkWriteError:
+            log.info(f"Duplicate flag")
 
 
 def getNewFlags() -> list[str]:
     log = logger.bind(file="db.log")
 
-    flags = [x["_id"] for x in collection.find({"status": "unknown"}, ["_id"])]
+    flags = [x["_id"] for x in collection.find({"status": "Unknown"}, ["_id"])]
     return flags
 
 
 def updateFlags(ret):
     log = logger.bind(file="db.log")
 
-    # TODO: Parse response and update status
     for response in ret:
         f = response["flag"]
         status = response["status"]

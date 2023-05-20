@@ -16,13 +16,13 @@ def submit_flags(flags: list[str]):
             "http://10.10.0.1:8080/flags",
             headers={"X-Team-Token": conf["TEAM_TOKEN"]},
             json=flags,
-            timeout=5,
+            timeout=90,
         )
-        response = response.json()["Flags"]  # this is now a list
+        response = response.json()  # this is now a list
         log.info(f"Got {response = }")
         return response
     except requests.ConnectTimeout as e:
-        log.critical("Gameserver is unreachable!")
+        log.critical("Gameserver didn't answer!")
         raise e
 
     except requests.JSONDecodeError as e:
@@ -30,7 +30,7 @@ def submit_flags(flags: list[str]):
         raise e
 
     except Exception as e:
-        log.critical(f"Unhandled exception was raise!\n{e}")
+        log.critical(f"Unhandled exception was raised!\n{e}")
 
 
 def FlagSubmitter():
@@ -43,10 +43,13 @@ def FlagSubmitter():
         flags = getNewFlags()
         if flags:
             log.info("Submitting new flags...")
+
             ret = submit_flags(flags)
             updateFlags(ret)
+
         else:
             log.info("There is no new flags")
+            continue
 
         remaining = conf["flag_submission_delay"] - (time.time() - s)
         if remaining > 0:
