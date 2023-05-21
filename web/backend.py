@@ -22,7 +22,7 @@ logger.add(
     sink=f"{logs_dir}/backend.log",
     format="<d>{time:HH:mm:ss.SS}</d> | <level>{level:^8}</level> | {message}",
     enqueue=True,
-    level="INFO",
+    level="DEBUG",
     colorize=True,
 )
 app = Flask(__name__)
@@ -118,6 +118,7 @@ def handle_connect(data):
 def handle_status(data):
     status_html = ""
     for servicename, statuses in status_dict.items():
+        logger.debug(f"service: {servicename} status: {statuses}")
         status_sla = "verde" if statuses["CHECK_SLA"] == 101 else "rosso"
         status_get = "verde" if statuses["GET_FLAG"] == 101 else "rosso"
         status_put = "verde" if statuses["PUT_FLAG"] == 101 else "rosso"
@@ -160,7 +161,7 @@ def runStatusChecker():
     global status_dict
     while True:
         try:
-            status_dict = scrape_status()
+            status_dict = scrape_status(logger)
             socketio.emit("status", status_dict)
         except Exception as e:
             logger.error(f"{e}")

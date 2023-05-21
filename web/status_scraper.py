@@ -1,12 +1,13 @@
-import stat
-import requests
+import time
 import json
+import requests
+
 
 with open("../configs/config.json", "r") as f:  # relative to CWD
     conf: dict = json.load(f)
 
 
-def scrape_status():
+def scrape_status(logger=None):
     """
     Returns a dictionary
     {
@@ -29,14 +30,16 @@ def scrape_status():
     }
     """
     status = requests.get(url)
-    if status.status_code != 200:
-        raise Exception(f"Status returned {response}")
-    try:
-        if status.json()["code"] == "UNKNOWN":
-            print("The game is yet to start")
-            return
-    except Exception:
-        pass
+    while True:  # Wait if the network isn't open
+        url = "http://10.10.0.1/api/reports/status.json"
+        status = requests.get(url)
+        if status.json() != {"code": "UNKNOWN", "message": "An error has occurred"}:
+            break
+        time.sleep(30)
+        return
+    if logger:
+        logger.info("Game start")
+
     currentRound = status.json()["currentRound"]
     url = f"http://10.10.0.1/api/reports/public/{currentRound}/checks.json"
     response = requests.get(url)
