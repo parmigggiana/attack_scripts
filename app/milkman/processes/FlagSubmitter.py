@@ -16,7 +16,7 @@ def submit_flags(flags: list[str]):
             "http://10.10.0.1:8080/flags",
             headers={"X-Team-Token": conf["TEAM_TOKEN"]},
             json=flags,
-            timeout=90,
+            timeout=120,
         )
         response = response.json()  # this is now a list
         log.info(f"Got {response = }")
@@ -49,6 +49,7 @@ def FlagSubmitter():
 
         else:
             log.info("There is no new flags")
+            time.sleep(5)
             continue
 
         remaining = conf["flag_submission_delay"] - (time.time() - s)
