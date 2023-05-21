@@ -18,7 +18,7 @@ except Exception as e:
     )
 
 
-def save_flags(flags: list[str]):
+def save_flags(flags: list[str], submitter: str):
     log = logger.bind(file="db.log")
     valid_flags = []
 
@@ -31,14 +31,16 @@ def save_flags(flags: list[str]):
         if m:
             for f in m:
                 valid_flags.append(f.group())
-                log.debug(f"Got valid flag: {f.group()}")
 
         else:
             log.warning(f"Received flag that doesn't match regex: {flag}")
 
     if valid_flags:
-        d = [{"_id": flag, "status": "Unknown"} for flag in valid_flags]
-        log.info(f"Storing valid flags: {valid_flags}")
+        d = [
+            {"_id": flag, "status": "Unknown", "submitter": submitter}
+            for flag in valid_flags
+        ]
+        log.info(f"Storing valid flags from {submitter}: {valid_flags}")
         try:
             res = collection.insert_many(d, ordered=False)
             return res

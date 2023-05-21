@@ -4,6 +4,8 @@ import time
 from threading import Thread
 from multiprocessing import JoinableQueue
 
+import requests
+
 from milkman.db import save_flags
 from milkman.logger import logger
 from milkman.config import Config
@@ -50,7 +52,7 @@ def launchAttack(exploit, target_ip: str, gametickQueue):
     elapsed = time.time() - start
     gametickQueue.task_done()
 
-    save_flags(flags)
+    save_flags(flags, exploit.__name__)
     if elapsed > conf["max_thread_time"]:
         level = "WARNING"
     log.log(level, f"{exploit.__name__} took {elapsed:.2f} seconds")
@@ -63,6 +65,17 @@ def GametickManager():
     exploits = Exploits()
 
     threads = []
+    while True:  # Wait until the network is open
+        url = "http://10.10.0.1/api/reports/status.json"
+        try:
+            status = requests.get(url)
+            if status.json() != {"code": "UNKNOWN", "message": "An error has occurred"}:
+                break
+        except Exception:
+            pass
+        time.sleep(20)
+
+    currentRound = status.json()["currentRound"]
     while True:
         tick_n += 1
         threads.clear()
