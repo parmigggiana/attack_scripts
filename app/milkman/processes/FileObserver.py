@@ -8,6 +8,7 @@ from milkman.exploits import Exploits
 from milkman.logger import logger
 
 observers = []
+log = logger.bind(file="observer.log")
 
 
 class ExploitsModHandler(FileSystemEventHandler):
@@ -18,7 +19,7 @@ class ExploitsModHandler(FileSystemEventHandler):
 
     def on_modified(self, event):
         if (time.time() - self.last_trigger) > 1:
-            logger.info("Reloading exploits", extra={"file": "observer.log"})
+            log.info("Reloading exploits", extra={"file": "observer.log"})
             Exploits().load_exploits()
             self.last_trigger = time.time()
 
@@ -32,14 +33,12 @@ class ConfigModHandler(FileSystemEventHandler):
     def on_modified(self, event):
         trigger = time.time()
         if (trigger - self.last_trigger) > 0.5:  # Added debouncing
-            logger.info("Reloading configs", extra={"file": "observer.log"})
+            log.info("Reloading configs", extra={"file": "observer.log"})
             Config().load_configs()
             self.last_trigger = time.time()
 
 
 def FileObserver():
-    log = logger.bind(file="observer.log")
-
     exploitsObserver = Observer()
     configObserver = Observer()
     exploitsHandler = ExploitsModHandler()

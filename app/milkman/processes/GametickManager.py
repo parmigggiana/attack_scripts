@@ -52,19 +52,14 @@ def launchAttack(exploit, target_ip: str, gametickQueue):
     elapsed = time.time() - start
     gametickQueue.task_done()
 
-    save_flags(flags, exploit.__name__)
+    save_flags(flags, exploit.__module__)
     if elapsed > conf["max_thread_time"]:
         level = "WARNING"
-    log.log(level, f"{exploit.__name__} took {elapsed:.2f} seconds")
+    log.log(level, f"{exploit.__module__} took {elapsed:.2f} seconds")
     return
 
 
-def GametickManager():
-    tick_n = 0
-    log = logger.bind(file="gameloop.log")
-    exploits = Exploits()
-
-    threads = []
+def waitStart():
     while True:  # Wait until the network is open
         url = "http://10.10.0.1/api/reports/status.json"
         try:
@@ -76,6 +71,15 @@ def GametickManager():
         time.sleep(20)
 
     currentRound = status.json()["currentRound"]
+
+
+def GametickManager():
+    tick_n = 0
+    log = logger.bind(file="gameloop.log")
+    exploits = Exploits()
+
+    threads = []
+    waitStart()
     while True:
         tick_n += 1
         threads.clear()
@@ -83,7 +87,7 @@ def GametickManager():
         log.info(f"Starting gametick {tick_n}")
         gametickQueue = JoinableQueue()
         for i, exploit in enumerate(exploits):
-            log.info(f"Starting {exploit.__name__} ({i+1}/{len(exploits)})")
+            log.info(f"Starting {exploit.__module__} ({i+1}/{len(exploits)})")
             for id in range(1, conf["highest_id"] + 1):
                 if id == conf["team_id"]:
                     continue
@@ -98,7 +102,7 @@ def GametickManager():
                         target_ip,
                         gametickQueue,
                     ),
-                    name=f"{exploit.__name__}_{target_ip}",
+                    name=f"{exploit.__module__}_{target_ip}",
                 )
                 t.start()
                 threads.append(t)
