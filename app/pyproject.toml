@@ -12,7 +12,8 @@ dependencies = [
     "pycryptodome",
     "pillow",
     "numpy",
-    "randcrack"
+    "randcrack",
+    "beautifulsoup4",
 ]
 
 [build-system]
