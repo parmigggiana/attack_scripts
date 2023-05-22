@@ -17,6 +17,8 @@ services:
     ports:
       - 7071:8081
     restart: always
+    depends_on:
+      - mongo
     environment:
       ME_CONFIG_MONGODB_SERVER: mongo
       ME_CONFIG_MONGODB_ENABLE_ADMIN: false
@@ -27,6 +29,8 @@ services:
 
   app:
     build: ./app
+    depends_on:
+      - mongo
     restart: always
     hostname: app
     environment:
@@ -41,6 +45,8 @@ services:
     build: ./web
     ports:
       - 7070:7070
+    depends_on:
+      - app
     restart: always
     hostname: web
     environment:

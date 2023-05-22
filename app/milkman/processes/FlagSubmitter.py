@@ -37,6 +37,7 @@ def FlagSubmitter():
     log = logger.bind(file="flagsubmitter.log")
     conf = Config()
 
+    log.debug("FlagSubmitter started")
     while True:
         s = time.time()
 

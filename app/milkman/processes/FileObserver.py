@@ -19,9 +19,9 @@ class ExploitsModHandler(FileSystemEventHandler):
 
     def on_modified(self, event):
         if (time.time() - self.last_trigger) > 1:
+            self.last_trigger = time.time()
             log.info("Reloading exploits", extra={"file": "observer.log"})
             Exploits().load_exploits()
-            self.last_trigger = time.time()
 
 
 class ConfigModHandler(FileSystemEventHandler):

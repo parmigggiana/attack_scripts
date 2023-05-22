@@ -9,7 +9,7 @@ _conf = {
             "sink": sys.stdout,
             "enqueue": True,
             "format": "<d>{time:HH:mm:ss.SS}</d> <c>{name}</c> <level>[{level:^8}]</level> : {message}",
-            "level": "WARNING",
+            "level": "DEBUG",
             "colorize": True,
         },
         {
