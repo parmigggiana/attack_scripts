@@ -12,6 +12,19 @@ services:
     volumes:
       - ./db:/data/db
 
+  web-mongo:
+    image: mongo-express
+    ports:
+      - 7071:8081
+    restart: always
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: false
+      ME_CONFIG_MONGODB_AUTH_DATABASE: ctf
+      ME_CONFIG_MONGODB_AUTH_USERNAME:
+      ME_CONFIG_MONGODB_AUTH_PASSWORD:
+
+
   app:
     build: ./app
     restart: always
