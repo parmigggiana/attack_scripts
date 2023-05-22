@@ -12,13 +12,15 @@ from milkman.processes import GametickManager, FileObserver, FlagSubmitter
 def main():
     log = logger.bind(file="app.log")
     log.info(f"Parent has PID = {os.getpid()}")
-    log.info("Waiting for exploits to be loaded...")
     exploits = Exploits()
 
+    """
+    log.info("Waiting for exploits to be loaded...")
     while not exploits:  # keep refreshing until there's an exploit
         time.sleep(3)
     else:
         log.success("Done")
+    """
 
     executor = ProcessPoolExecutor(3)
     executor.submit(FileObserver)
