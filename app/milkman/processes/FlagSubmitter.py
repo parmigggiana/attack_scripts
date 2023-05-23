@@ -12,6 +12,9 @@ def submit_flags(flags: list[str]):
     log = logger.bind(file="flagsubmitter.log")
 
     try:
+        """
+        this may be different for other CTFs (besides obviously the URL), so maybe it should be made into an editable module instead.
+        """
         response = requests.put(
             "http://10.10.0.1:8080/flags",
             headers={"X-Team-Token": conf["TEAM_TOKEN"]},
@@ -26,7 +29,7 @@ def submit_flags(flags: list[str]):
         raise e
 
     except requests.JSONDecodeError as e:
-        log.critical(f"JSON decoding error!\n{response = }")
+        log.critical(f"JSON decoding error!\n{response = }")  # type: ignore
         raise e
 
     except Exception as e:

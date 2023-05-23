@@ -9,6 +9,9 @@ with open("../configs/config.json", "r") as f:  # relative to CWD
 
 def scrape_status(logger=None):
     """
+    this may be different for other CTFs (besides obviously the URL), so maybe it should be made into an editable module instead.
+    """
+    """
     Returns a dictionary
     {
         'WAQS': {'CHECK_SLA':101, 'GET_FLAG': 101, 'PUT_FLAG': 101},

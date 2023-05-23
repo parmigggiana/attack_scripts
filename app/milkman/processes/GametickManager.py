@@ -25,7 +25,7 @@ def timeCounterThread(n, gametickQueue: JoinableQueue, threads: list[Thread]):
     for i in range(len(exploits) * conf["highest_id"]):
         gametickQueue.put(i)
     start = time.time()
-    while gametickQueue._notempty:
+    while gametickQueue._notempty:  # type: ignore
         pass
     log.debug("All tokens given")
     gametickQueue.join()
@@ -43,6 +43,9 @@ def timeCounterThread(n, gametickQueue: JoinableQueue, threads: list[Thread]):
 
 
 def waitStart():
+    """
+    this may be different for other CTFs (besides obviously the URL), so maybe it should be made into an editable module instead.
+    """
     while True:  # Wait until the network is open
         url = "http://10.10.0.1/api/reports/status.json"
         try:

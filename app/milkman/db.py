@@ -44,7 +44,7 @@ def save_flags(flags: list[str], submitter: str):
         try:
             res = collection.insert_many(d, ordered=False)
             return res
-        except pymongo.errors.BulkWriteError:
+        except pymongo.errors.BulkWriteError:  # type: ignore
             log.info(f"Duplicate flag")
 
 
@@ -63,19 +63,3 @@ def updateFlags(ret):
         status = response["status"]
 
         collection.update_one({"_id": f}, {"$set": {"status": status}})
-
-
-def main():  # Just for testing purposes
-    flags = []
-    for _ in range(random.randint(1, 5)):
-        flags.append(uuid.uuid4().hex)
-    print(flags)
-    save_flags(flags)
-    for x in collection.find():
-        print(x)
-    # submit_new_flags()
-    collection.delete_many({})
-
-
-if __name__ == "__main__":
-    main()

@@ -11,7 +11,7 @@ class SingletonMeta(type):
 
     _instances = {}
 
-    _lock: Lock = Lock()
+    _lock = Lock()
     """
     We now have a lock object that will be used to synchronize threads during
     first access to the Singleton.
