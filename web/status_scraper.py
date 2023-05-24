@@ -19,7 +19,6 @@ def scrape_status(logger=None):
     }
     """
 
-    url = "http://10.10.0.1/api/reports/status.json"
     """
     {
         "currentRound":44,
@@ -32,7 +31,6 @@ def scrape_status(logger=None):
         ]
     }
     """
-    status = requests.get(url)
     while True:  # Wait if the network isn't open
         url = "http://10.10.0.1/api/reports/status.json"
         status = requests.get(url)
