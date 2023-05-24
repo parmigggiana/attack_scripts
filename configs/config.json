@@ -8,9 +8,8 @@
     "baseip": "10.60.{id}.1",
     "db_url": "mongodb://mongo:27017/",
     "flag_submission_delay": 30,
-    "status_check_delay": 15
+    "status_check_delay": 15,
+    "wait_gamestart": true,
+    "ping_before_exploit": true,
+    "use_timer": true
 }
-
-  
-  
-  
