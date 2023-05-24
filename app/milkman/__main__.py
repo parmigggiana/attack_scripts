@@ -1,5 +1,4 @@
 import os
-import time
 
 from concurrent.futures import ProcessPoolExecutor
 
@@ -12,9 +11,9 @@ from milkman.processes import GametickManager, FileObserver, FlagSubmitter
 def main():
     log = logger.bind(file="app.log")
     log.info(f"Parent has PID = {os.getpid()}")
-    exploits = Exploits()
 
     """
+    exploits = Exploits()
     log.info("Waiting for exploits to be loaded...")
     while not exploits:  # keep refreshing until there's an exploit
         time.sleep(3)

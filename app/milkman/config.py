@@ -1,4 +1,5 @@
 from json import load
+from typing import Any
 from jsonschema import validate
 
 from milkman.logger import logger
@@ -33,6 +34,9 @@ class Config(dict, metaclass=SingletonMeta):
             except Exception:
                 logger.exception(f"Invalid config")
                 return
+
+    def __getitem__(self, __key: Any) -> Any:
+        return super().__getitem__(__key)
 
 
 if __name__ == "__main__":  # for testing
