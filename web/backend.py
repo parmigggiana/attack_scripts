@@ -107,6 +107,13 @@ def index():
     return redirect("/exploits")
 
 
+@app.route("/clear_logs", methods=["GET"])
+def clear_logs():
+    for file in Path(logs_dir).iterdir():
+        os.remove(file)
+    return "ok", 200
+
+
 @socketio.on("connected")
 def handle_connect(data):
     for channel in channels:
@@ -119,9 +126,18 @@ def handle_status(data):
     status_html = ""
     for servicename, statuses in status_dict.items():
         logger.debug(f"service: {servicename} status: {statuses}")
-        status_sla = "verde" if statuses["CHECK_SLA"] == 101 else "rosso"
-        status_get = "verde" if statuses["GET_FLAG"] == 101 else "rosso"
-        status_put = "verde" if statuses["PUT_FLAG"] == 101 else "rosso"
+        try:
+            status_sla = "verde" if statuses["CHECK_SLA"] == 101 else "rosso"
+        except KeyError:
+            status_sla = "rosso"
+        try:
+            status_get = "verde" if statuses["GET_FLAG"] == 101 else "rosso"
+        except KeyError:
+            status_get = "rosso"
+        try:
+            status_put = "verde" if statuses["PUT_FLAG"] == 101 else "rosso"
+        except KeyError:
+            status_put = "rosso"
         status_html += f"""
     <div class="flex items-center gap-3 p-2 bg-scuro">
         <p>{servicename}</p>
