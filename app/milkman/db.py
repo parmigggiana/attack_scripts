@@ -40,12 +40,12 @@ def save_flags(flags: list[str], submitter: str):
             {"_id": flag, "status": "Unknown", "submitter": submitter}
             for flag in valid_flags
         ]
-        log.info(f"Storing valid flags from {submitter}: {valid_flags}")
         try:
             res = collection.insert_many(d, ordered=False)
+            log.info(f"Storing valid flags from {submitter}: {valid_flags}")
             return res
         except pymongo.errors.BulkWriteError:  # type: ignore
-            log.info(f"Duplicate flag")
+            log.info(f"Duplicate flag(s) from exploit {submitter}")
 
 
 def getNewFlags() -> list[str]:
