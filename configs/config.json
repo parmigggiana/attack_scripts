@@ -1,15 +1,15 @@
 {
-    "team_id": 77,
-    "highest_id": 82,
-    "TEAM_TOKEN": "b0d9d5b0307be878aa00e9635e230d2d",
+    "team_id": 39,
+    "highest_id": 43,
+    "TEAM_TOKEN": "bac02cf066bdaae77fab93dd1544ea42",
     "max_thread_time": 90,
     "tick_duration": 120,
     "flag_regex": "[A-Z0-9]{31}=",
     "baseip": "10.60.{id}.1",
     "db_url": "mongodb://mongo:27017/",
-    "flag_submission_delay": 30,
-    "status_check_delay": 15,
-    "wait_gamestart": true,
-    "ping_before_exploit": true,
+    "flag_submission_delay": 100,
+    "status_check_delay": 120,
+    "wait_gamestart": false,
+    "ping_before_exploit": false,
     "use_timer": true
 }
