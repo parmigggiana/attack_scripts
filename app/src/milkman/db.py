@@ -30,9 +30,6 @@ def save_flags(flags: list[str], submitter: str):
             for f in m:
                 valid_flags.append(f.group())
 
-        else:
-            log.warning(f"Received flag that doesn't match regex: {flag}")
-
     if valid_flags:
         d = [
             {"_id": flag, "status": "Unknown", "submitter": submitter}

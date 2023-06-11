@@ -1,6 +1,6 @@
 import sys
 
-from loguru import logger
+from morel import logger
 
 _logs_dir = "../logs"
 _conf = {
