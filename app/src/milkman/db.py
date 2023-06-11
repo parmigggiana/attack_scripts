@@ -1,6 +1,4 @@
 import re
-import uuid
-import random
 import pymongo
 
 from milkman.config import Config

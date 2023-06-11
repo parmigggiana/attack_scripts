@@ -6,11 +6,11 @@ WORKDIR /data/app
 RUN apt update && apt install iputils-ping -y
 
 COPY pyproject.toml .
-RUN mkdir milkman
-COPY milkman/* milkman
+RUN mkdir -p src/milkman
+COPY src/milkman/* src/milkman
 
 # Install Python dependencies
-RUN pip install --no-cache-dir -e .
+RUN pip install --no-cache-dir .
 
 
 

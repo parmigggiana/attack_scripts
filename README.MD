@@ -154,3 +154,7 @@ def share(target_ip):
 - [x] Consider moving from multiprocessing to [concurrent](https://docs.python.org/3/library/concurrent.futures.html)
 - [ ] Consider moving from threading to [concurrent](https://docs.python.org/3/library/concurrent.futures.html)
 - [ ] Fix resources leaking
+- [ ] Add button to run exploit now
+- [ ] Stop exploits getting ran twice at startup
+- [ ] Fix lagging loggers on webapp
+- [ ] Add button to clear logs
