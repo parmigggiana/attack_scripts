@@ -3,7 +3,7 @@ from typing import Any
 from jsonschema import validate
 
 from milkman.logger import logger
-from milkman.singleton import SingletonMeta
+from morel.singleton import SingletonMeta
 
 
 class Config(dict, metaclass=SingletonMeta):
