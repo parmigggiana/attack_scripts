@@ -4,7 +4,7 @@ PYTHON := python3
 PYTHONPATH := `pwd`
 
 .PHONY: up
-up:
+up: logs
 	docker compose up --build -d
 
 .PHONY: down
@@ -19,6 +19,8 @@ clear-logs:
 clear-db:
 	sudo rm -rf db
 
+logs:
+	mkdir logs
 
 .PHONY: cleanstart
 cleanstart: clear-logs clear-db up
