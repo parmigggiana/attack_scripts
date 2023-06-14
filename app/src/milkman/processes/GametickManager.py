@@ -52,7 +52,7 @@ def waitStart():
                 break
         except Exception:
             pass
-        time.sleep(20)
+        time.sleep(30)
 
 
 def GametickManager():

@@ -10,7 +10,7 @@ RUN mkdir -p src/
 COPY src src/
 
 # Install Python dependencies
-RUN pip install --no-cache-dir .
+RUN pip install .
 
 
 
