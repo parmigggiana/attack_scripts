@@ -43,7 +43,14 @@ def save_flags(flags: list[str | bytes] | str | bytes, submitter: str):
 
     if valid_flags:
         d = [
-            {"_id": flag, "status": "Unknown", "submitter": submitter}
+            {
+                "_id": flag,
+                "status": "Unknown",
+                "submitter": submitter,
+                "saved_timestamp": time.time(),
+                "response_timestamp": 0,
+                "reason": "",
+            }
             for flag in valid_flags
         ]
         try:
@@ -66,5 +73,15 @@ def updateFlags(ret):
     for response in ret:
         f = response["flag"]
         status = response["status"]
-
-        collection.update_one({"_id": f}, {"$set": {"status": status}})
+        msg = response["msg"]
+        reason = "".join(msg.split(" ")[2:]) if not status else ""
+        collection.update_one(
+            {"_id": f},
+            {
+                "$set": {
+                    "status": status,
+                    "reason": reason,
+                    "response_timestamp": time.time(),
+                }
+            },
+        )
