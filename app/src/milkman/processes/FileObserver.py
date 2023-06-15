@@ -23,7 +23,7 @@ class ExploitsModHandler(FileSystemEventHandler):
         if (time.time() - self.last_trigger) > 1:
             self.last_trigger = time.time()
             log.info("Reloading exploits", extra={"file": "observer.log"})
-            Exploits().load_exploits()
+            Exploits().update()
 
 
 class TargetsModHandler(FileSystemEventHandler):
