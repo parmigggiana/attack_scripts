@@ -1,10 +1,13 @@
 import re
+import time
 import pymongo
 
 from milkman.config import Config
 from milkman.logger import logger
 
 conf = Config()
+_global_timer = time.time()
+
 try:
     db_client = pymongo.MongoClient(conf["db_url"])
     db = db_client["ctf"]
@@ -17,6 +20,8 @@ except Exception as e:
 
 
 def save_flags(flags: list[str], submitter: str):
+    global _global_timer
+
     log = logger.bind(file="db.log")
     valid_flags = []
 
@@ -40,7 +45,10 @@ def save_flags(flags: list[str], submitter: str):
             log.info(f"Storing valid flags from {submitter}: {valid_flags}")
             return res
         except pymongo.errors.BulkWriteError:  # type: ignore
-            log.info(f"Duplicate flag(s) from exploit {submitter}")
+            t = time.time()
+            if t - _global_timer > 20:
+                _global_timer = time.time()
+                log.info(f"Duplicate flag(s) from exploit {submitter}")
 
 
 def getNewFlags() -> list[str]:
