@@ -5,6 +5,10 @@ PYTHONPATH := `pwd`
 
 .PHONY: up
 up: logs
+	docker compose up --build
+
+.PHONY: upd
+upd: logs
 	docker compose up --build -d
 
 .PHONY: down
