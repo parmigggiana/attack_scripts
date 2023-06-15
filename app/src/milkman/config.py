@@ -1,9 +1,12 @@
 from json import load
 from typing import Any
-from jsonschema import validate
+from jsonschema import ValidationError, validate
 
 from milkman.logger import logger
 from morel.singleton import SingletonMeta
+from morel import Targets
+
+Targets().setBaseDir("../targets")
 
 
 class Config(dict, metaclass=SingletonMeta):
@@ -20,6 +23,11 @@ class Config(dict, metaclass=SingletonMeta):
                 "baseip": {"type": "string"},
                 "db_url": {"type": "string"},
                 "flag_submission_delay": {"type": "number"},
+                "status_check_delay": {"type": "number"},
+                "wait_gamestart": {"type": "boolean"},
+                "ping_before_exploit": {"type": "boolean"},
+                "use_timer": {"type": "boolean"},
+                "check_status": {"type": "boolean"},
             },
         }
         self.load_configs()
@@ -31,7 +39,7 @@ class Config(dict, metaclass=SingletonMeta):
                 validate(x, self.schema)
                 for key, value in x.items():
                     self[key] = value
-            except Exception:
+            except ValidationError:
                 logger.exception(f"Invalid config")
                 return
 
