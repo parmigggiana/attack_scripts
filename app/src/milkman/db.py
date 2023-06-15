@@ -7,29 +7,35 @@ from milkman.logger import logger
 
 conf = Config()
 _global_timer = time.time()
+log = logger.bind(file="db.log")
 
 try:
     db_client = pymongo.MongoClient(conf["db_url"])
     db = db_client["ctf"]
     collection = db["flags"]
 except Exception as e:
-    logger.exception(
-        "Can't connect to database; did you set it up properly?",
-        extra={"file": "db.log"},
-    )
+    log.exception("Can't connect to database; did you set it up properly?")
 
 
-def save_flags(flags: list[str], submitter: str):
+def save_flags(flags: list[str | bytes] | str | bytes, submitter: str):
     global _global_timer
 
     log = logger.bind(file="db.log")
     valid_flags = []
 
-    if isinstance(flags, str):
+    if isinstance(flags, str) or isinstance(flags, bytes):
         flags = [
             flags,
         ]
     for flag in flags:
+        if isinstance(flag, bytes):
+            try:
+                flag = flag.decode("utf-8")
+            except Exception as e:
+                log.warning(f"Error while decoding flag from {submitter}")
+                log.warning(f"returned value: {flag}")
+                log.debug(f"{e}")
+
         m = re.finditer(pattern=conf["flag_regex"], string=flag)
         if m:
             for f in m:
@@ -52,15 +58,11 @@ def save_flags(flags: list[str], submitter: str):
 
 
 def getNewFlags() -> list[str]:
-    log = logger.bind(file="db.log")
-
     flags = [x["_id"] for x in collection.find({"status": "Unknown"}, ["_id"])]
     return flags
 
 
 def updateFlags(ret):
-    log = logger.bind(file="db.log")
-
     for response in ret:
         f = response["flag"]
         status = response["status"]
