@@ -48,5 +48,5 @@ _conf = {
     ],
 }
 
-logger.configure(**_conf)
+logger.configure(**_conf)  # type: ignore
 logger = logger.bind(file="")
