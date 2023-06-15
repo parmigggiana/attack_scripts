@@ -11,5 +11,6 @@
     "status_check_delay": 120,
     "wait_gamestart": true,
     "ping_before_exploit": false,
-    "use_timer": true
+    "use_timer": true,
+    "check_status": false
 }

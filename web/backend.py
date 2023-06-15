@@ -13,7 +13,7 @@ from flask_socketio import SocketIO
 from flask import Flask, jsonify, redirect, render_template, request
 
 logs_dir = "../logs"
-max_lines = 150  # Lenght of history for the frontend
+max_lines = 300  # Lenght of history for the frontend
 p = Path("../exploits")
 conv = Ansi2HTMLConverter(inline=True, scheme="osx")
 status_dict = {}
@@ -77,7 +77,7 @@ def exploits():
     )
 
 
-@app.route("/exploits/<string:filename>", methods=["POST"])
+@app.route("/exploits/<string:filename>", methods=["POST"])  # type: ignore
 def exploits_edit(filename):
     filename = filename
     body = request.data
@@ -177,7 +177,7 @@ def runStatusChecker():
     global status_dict
     while True:
         try:
-            status_dict = scrape_status(logger)
+            # status_dict = scrape_status(logger)
             socketio.emit("status", status_dict)
         except Exception as e:
             logger.error(f"{e}")
@@ -185,13 +185,22 @@ def runStatusChecker():
 
 
 def main():
+    threads = []
     logger.info("Starting Observer Thread")
+
     t = Thread(target=runObserver)
-    t = Thread(target=runStatusChecker)
     t.start()
+    threads.append(t)
+
+    if conf["check_status"]:
+        t = Thread(target=runStatusChecker)
+        t.start()
+        threads.append(t)
+
     logger.info(f"Starting webserver on {host}:{port}")
     socketio.run(app, host=host, port=port, debug=debug)
-    t.join()
+    for t in threads:
+        t.join()
 
 
 if __name__ == "__main__":
