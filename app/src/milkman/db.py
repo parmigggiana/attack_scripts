@@ -2,7 +2,7 @@ import re
 import time
 
 from pymongo import MongoClient
-
+from pymongo.errors import BulkWriteError
 from milkman.config import Config
 from milkman.logger import logger
 
@@ -58,7 +58,7 @@ def save_flags(flags: list[str | bytes] | str | bytes, submitter: str):
             res = collection.insert_many(d, ordered=False)
             log.info(f"Storing valid flags from {submitter}: {valid_flags}")
             return res
-        except pymongo.errors.BulkWriteError:  # type: ignore
+        except BulkWriteError:  # type: ignore
             t = time.time()
             if t - _global_timer > 20:
                 _global_timer = time.time()
