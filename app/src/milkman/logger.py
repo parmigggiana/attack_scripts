@@ -6,6 +6,13 @@ _logs_dir = "../logs"
 _conf = {
     "handlers": [
         {
+            "sink": sys.stdout,
+            "enqueue": True,
+            "format": "<d>{time:HH:mm:ss.SS}</d> <c>{name}</c> <level>[{level:^8}]</level> : {message}",
+            "level": "DEBUG",
+            "colorize": True,
+        },
+        {
             "sink": f"{_logs_dir}/db.log",
             "format": "<d>{time:HH:mm:ss.SS}</d> | <level>{level:<8}</level>\t{message}",
             "enqueue": True,
