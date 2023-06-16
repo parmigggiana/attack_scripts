@@ -1,7 +1,8 @@
 from concurrent.futures import ProcessPoolExecutor
 
 # Part of the threads getting spawned by the main process are due to loguru - there's one for each sink
-from .processes import GametickManager, FileObserver, FlagSubmitter
+from milkman.processes import GametickManager, FileObserver, FlagSubmitter
+from morel import logger
 
 
 def main():
@@ -14,6 +15,7 @@ def main():
         log.success("Done")
     """
 
+    logger.info("Starting milkman")
     executor = ProcessPoolExecutor(3)
     executor.submit(FileObserver)
     executor.submit(FlagSubmitter)

@@ -5,7 +5,7 @@ PYTHONPATH := `pwd`
 
 .PHONY: up
 up: logs
-	docker compose up --build
+	docker compose up --build --no-attach mongo --remove-orphans
 
 .PHONY: upd
 upd: logs

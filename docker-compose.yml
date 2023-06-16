@@ -3,10 +3,10 @@ version: '3.8'
 services:
   mongo:
     image: mongo
-    ports:
-      - 27017:27017
+    #ports:
+    #  - 27017:27017
     restart: always
-    hostname: mongo
+    hostname: mongo-milkman
     environment:
       TZ: Europe/Rome
     volumes:

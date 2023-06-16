@@ -1,6 +1,7 @@
 import re
 import time
-import pymongo
+
+from pymongo import MongoClient
 
 from milkman.config import Config
 from milkman.logger import logger
@@ -10,7 +11,7 @@ _global_timer = time.time()
 log = logger.bind(file="db.log")
 
 try:
-    db_client = pymongo.MongoClient(conf["db_url"])
+    db_client = MongoClient(conf["db_url"])
     db = db_client["ctf"]
     collection = db["flags"]
 except Exception as e:

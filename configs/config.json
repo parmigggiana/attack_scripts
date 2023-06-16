@@ -6,11 +6,11 @@
     "tick_duration": 120,
     "flag_regex": "[A-Z0-9]{31}=",
     "baseip": "10.60.{id}.1",
-    "db_url": "mongodb://mongo:27017/",
+    "db_url": "mongodb://mongo-milkman:27017/",
     "flag_submission_delay": 85,
     "status_check_delay": 120,
     "wait_gamestart": true,
-    "ping_before_exploit": false,
+    "ping_before_exploit": true,
     "use_timer": true,
     "check_status": false
 }
