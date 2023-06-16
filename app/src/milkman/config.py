@@ -6,7 +6,8 @@ from milkman.logger import logger
 from morel.singleton import SingletonMeta
 from morel import Targets
 
-Targets().setBaseDir("../targets")
+Targets.setBaseDir("../targets")
+Targets.update_targets()
 
 
 class Config(dict, metaclass=SingletonMeta):
