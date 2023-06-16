@@ -20,6 +20,7 @@ class ExploitsModHandler(FileSystemEventHandler):
         self.last_trigger = time.time()
 
     def on_modified(self, event):
+        print(event)
         if (time.time() - self.last_trigger) > 1:
             self.last_trigger = time.time()
             log.info("Reloading exploits", extra={"file": "observer.log"})
@@ -35,8 +36,8 @@ class TargetsModHandler(FileSystemEventHandler):
     def on_modified(self, event):
         if (time.time() - self.last_trigger) > 1:
             self.last_trigger = time.time()
-            log.info("Reloading targets", extra={"file": "observer.log"})
-            Targets().update()
+            log.info("Reloading target functions", extra={"file": "observer.log"})
+            Targets.update_targets()
 
 
 class ConfigModHandler(FileSystemEventHandler):
@@ -54,9 +55,13 @@ class ConfigModHandler(FileSystemEventHandler):
 
 
 def FileObserver():
+    global observers
+
     exploitsObserver = Observer()
     configObserver = Observer()
     targetsObserver = Observer()
+
+    observers.extend([exploitsObserver, configObserver, targetsObserver])
 
     exploitsHandler = ExploitsModHandler()
     configHandler = ConfigModHandler()
@@ -66,14 +71,8 @@ def FileObserver():
     configObserver.schedule(configHandler, path="../config.json")
     targetsObserver.schedule(targetsHandler, path="../targets", recursive=True)
 
-    exploitsObserver.start()
-    configObserver.start()
-    targetsObserver.start()
-
-    global observers
-    observers.append(exploitsObserver)
-    observers.append(configObserver)
-    observers.append(targetsObserver)
+    for x in observers:
+        x.start()
 
     log.debug("Observer started")
     while True:
