@@ -37,7 +37,7 @@ class TargetsModHandler(FileSystemEventHandler):
         if (time.time() - self.last_trigger) > 1:
             self.last_trigger = time.time()
             log.info("Reloading target functions", extra={"file": "observer.log"})
-            Targets.update_targets()
+            Targets.load_target_functions()
 
 
 class ConfigModHandler(FileSystemEventHandler):

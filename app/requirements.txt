@@ -1,4 +1,3 @@
-morel>=1.4.0
 requests
 pymongo
 watchdog
@@ -11,3 +10,4 @@ numpy
 randcrack
 beautifulsoup4
 sympy
+morel>=1.5.0

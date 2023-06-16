@@ -7,7 +7,8 @@ from morel.singleton import SingletonMeta
 from morel import Targets
 
 Targets.setBaseDir("../targets")
-Targets.update_targets()
+Targets.setLogger(logger.bind(file="exploits.log"))
+Targets.load_target_functions()
 
 
 class Config(dict, metaclass=SingletonMeta):
