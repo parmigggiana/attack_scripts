@@ -39,6 +39,7 @@ services:
       - ./app:/data/app
       - logs:/data/logs
       - exploits:/data/exploits
+      - targets:/data/targets
       - configs:/data/configs
 
   web:
@@ -71,6 +72,13 @@ volumes:
       type: 'none'
       o: 'bind'
       device: './exploits'
+
+  targets:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './targets'
 
   configs:
     driver: local
