@@ -20,7 +20,7 @@ services:
     depends_on:
       - mongo
     environment:
-      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_MONGODB_SERVER: mongo-milkman
       ME_CONFIG_MONGODB_ENABLE_ADMIN: false
       ME_CONFIG_MONGODB_AUTH_DATABASE: ctf
       ME_CONFIG_MONGODB_AUTH_USERNAME:

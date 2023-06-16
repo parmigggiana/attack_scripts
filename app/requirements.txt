@@ -1,0 +1,13 @@
+morel>=1.4.0
+requests
+pymongo
+watchdog
+inotify
+jsonschema
+pwntools
+pycryptodome
+pillow
+numpy
+randcrack
+beautifulsoup4
+sympy
