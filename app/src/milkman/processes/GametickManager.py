@@ -80,7 +80,7 @@ def GametickManager():
 
 
 def rungametick(tick_n, log):
-    t = Thread(Targets.fetch_new_targets())
+    t = Thread(target=Targets.fetch_new_targets)
     t.start()
     threads = []
     gametickQueue = JoinableQueue()
@@ -88,7 +88,7 @@ def rungametick(tick_n, log):
         log.info(f"Starting {exploit.__module__} ({i+1}/{len(exploits)})")
         threads.append(runExploit(exploit, gametickQueue))
     t.join()
-    log.info(f"{Targets = }")
+    # log.info(f"{Targets = }")
     t = Thread(
         target=timeCounterThread,
         args=(tick_n, gametickQueue, threads),
