@@ -16,4 +16,5 @@ COPY src src/
 RUN pip install .
 
 # Start the app
+WORKDIR /data/exploits
 CMD ["python", "-m", "milkman"]
