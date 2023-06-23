@@ -70,16 +70,16 @@ def GametickManager():
         if conf["use_timer"]:
             log.info(f"Starting gametick {tick_n}")
             start = time.time()
-            rungametick(tick_n, log)
+            rungametick(tick_n)
             time.sleep(conf["tick_duration"] - time.time() + start)
         else:
             waitGametickNotification(tick_n)
             log.info(f"Starting gametick {tick_n}")
-            rungametick(tick_n, log)
+            rungametick(tick_n)
         tick_n += 1
 
 
-def rungametick(tick_n, log):
+def rungametick(tick_n):
     t = Thread(target=Targets.fetch_new_targets)
     t.start()
     threads = []
