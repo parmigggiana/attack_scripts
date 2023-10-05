@@ -1,4 +1,8 @@
 # A collection of scripts to simplify testing and deploying attacks in attack-defence CTFs
+
+> **Warning**
+This repo is archived and won't be receiving any new updates. I'm working on a new version of the program that's easier to mantain and expand and more user friendly.
+
 All you need to do is write the exploit for a single target! `test_attack` will 
 help you check that everything works as intended. Before every game tick, `deploy` dinamically loads the configuration and any new exploits. Easy to configure through `config.py`, with a dedicated thread for each attack against each target.
 Configs and exploits are being watched and the program will automatically reload them when changed, no need to restart it (EXPLOITS RELOAD IS BROKEN, CONFIGS WORK).
